@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<h2>Kayıt Ol</h2>
+
+<form id="signupForm" class="form-group" method="post">
+    <div class="mb-2">
+        <label for="UserName" class="form-label">Kullanıcı Adı</label>
+        <input type="text" id="UserName" name="UserName" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="Password" class="form-label">Şifre</label>
+        <input type="password" id="password" name="password" class="form-control" />
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+</form>
+
+<p id="errorMessage" style="color: red; display: none;">Kullanıcı adı zaten mevcut!</p>

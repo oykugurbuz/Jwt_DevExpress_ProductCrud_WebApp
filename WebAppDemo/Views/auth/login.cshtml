@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<h2>Giriş Yap</h2>
+
+<form  id="loginForm" class="form-group" method="post">
+    <div class="mb-2">
+        <label for="UserName" class="form-label">Kullanıcı Adı</label>
+        <input type="UserName" id="UserName" name="UserNamedotnet dev-certs https --clean" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="Password" class="form-label">Şifre</label>
+        <input type="password" id="password" name="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+</form>
+
+<p id="errorMessage" style="color: red; display: none;">Yanlış kullanıcı adı veya şifre!</p>
+
+
+
