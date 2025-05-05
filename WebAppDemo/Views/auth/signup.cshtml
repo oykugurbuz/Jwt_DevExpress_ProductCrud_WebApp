@@ -1,20 +1,42 @@
 ﻿@{
     ViewData["Title"] = "Kayıt Ol";
+	Layout = "_Layout";
 }
+<html>
+<head><title></title></head>
+<body>
+	<div class="middlebox">
+		<div class="signup-container">
+			<form id="signupForm" class="form-group">
+				<div class="logo-container">
+					<img class="logo" src="~/images/logo.png" />
+				</div>
+				
+				<div class="mb-2">
+					<label for="UserName" class="form-label">Kullanıcı Adı</label>
+					<input type="text" id="UserName" name="UserName" class="form-control" />
+				</div>
+				<div class="mb-2">
+					<label for="email" class="form-label">E-mail</label>
+					<input type="text" id="email" name="email" class="form-control" />
+				</div>
+				<div class="mb-2">
+					<label for="Password" class="form-label">Şifre</label>
+					<input type="password" id="password" name="password" class="form-control" />
+				</div>
+				
 
-<h2>Kayıt Ol</h2>
+				<button type="submit" class="btn btn-primary">Kayıt Ol</button>
+				<div class="redirect">
+					<p>Zaten hesapınız varsa <a href="~/auth/login"> Giriş Yap</a></p>
+				</div>
+				
+			</form>
 
-<form id="signupForm" class="form-group" method="post">
-    <div class="mb-2">
-        <label for="UserName" class="form-label">Kullanıcı Adı</label>
-        <input type="text" id="UserName" name="UserName" class="form-control" />
-    </div>
-    <div class="mb-2">
-        <label for="Password" class="form-label">Şifre</label>
-        <input type="password" id="password" name="password" class="form-control" />
-    </div>
-  
-    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
-</form>
-
-<p id="errorMessage" style="color: red; display: none;">Kullanıcı adı zaten mevcut!</p>
+			<p id="errorMessage" style="color: red; display: none;">Kullanıcı adı zaten mevcut!</p>
+		</div>
+	</div>
+	
+</body>
+	
+</html>

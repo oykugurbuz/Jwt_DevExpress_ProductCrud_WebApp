@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using WebAppDemo.Models;
@@ -9,22 +11,38 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAppDemo.Controllers
 {
+    public class JwtResponse
+    {
+        private string responseString;
+
+        public JwtResponse(string responseString)
+        {
+            this.AccessToken = responseString;
+        }
+
+        public string AccessToken { get; set; }
+    }
     public class AuthController : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IConfiguration configuration, IHttpClientFactory clientFactory)
+        public AuthController(IConfiguration configuration, IHttpClientFactory clientFactory, ILogger<AuthController> logger)
         {
             _configuration = configuration;
             _clientFactory = clientFactory;
+            _logger = logger;
+
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Signup()
         {
             return View();
@@ -32,28 +50,30 @@ namespace WebAppDemo.Controllers
 
         [AllowAnonymous] 
         [HttpPost]
-        public async Task<IActionResult> Login(User loginModel)
+        public async Task<IActionResult> Login(LoginRequest loginModel)
         {
-            var apiUrl = "http://localhost:5269/api/Auth/login";
             var client = _clientFactory.CreateClient();
-            var content = new StringContent(JsonConvert.SerializeObject(loginModel), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(apiUrl, content);
+            var response = await client.PostAsJsonAsync("http://localhost:5269/api/Auth/login", loginModel);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var token = JsonConvert.DeserializeObject<dynamic>(result).token;
-
-               
-                TempData["Token"] = token;
-
-              
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "Geçersiz kullanıcı adı veya parola.");
+                return View(loginModel);
             }
 
-            
-            ViewBag.ErrorMessage = "Yanlış kullanıcı adı veya şifre.";
-            return View();
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var jwt = new JwtResponse(responseString);
+
+           
+            Response.Cookies.Append("jwt_token", jwt.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+            return RedirectToAction("SecretPage","Authorize" );
         }
 
       
@@ -61,8 +81,7 @@ namespace WebAppDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> Signup(SignupModel signupModel)
         {
-            
-            var apiUrl = "https://localhost:5269/api/Auth/signup"; 
+            var apiUrl = "http://localhost:5269/api/Auth/signup"; 
 
             var client = _clientFactory.CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(signupModel), Encoding.UTF8, "application/json");
@@ -74,12 +93,6 @@ namespace WebAppDemo.Controllers
             }
             ViewBag.ErrorMessage = "Kayıt işlemi başarısız. Kullanıcı adı zaten alınmış olabilir.";
             return View();
-        }
-
-        public IActionResult Logout()
-        {
-            TempData.Remove("Token");
-            return RedirectToAction("login", "auth");
         }
 
 

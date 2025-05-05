@@ -3,12 +3,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebAppDemo.Models
 {
-    public class ApplicationDbContext:IdentityDbContext<User>
+    public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options):base(options)
+        //
+        public ApplicationDbContext()
         {
-            
         }
-        public DbSet<User> Users { get; set; }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+
+        }
+
+        public DbSet<AppUserInfo> AppUserInfos { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet <Category> Categories { get; set; }
     }
+
 }

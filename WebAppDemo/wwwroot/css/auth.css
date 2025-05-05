@@ -1,0 +1,16 @@
+#sideNav{
+    height: 100vh;
+}
+.logo-img{
+    width:150px;
+}
+.dx-menu-items-container{
+    width:100%;
+}
+.dx-menu-vertical .dx-item-url{
+    text-decoration: none;
+    font-weight: 700;
+}
+#productList {
+    margin-top: 10px;
+}

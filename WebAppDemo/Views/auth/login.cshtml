@@ -1,23 +1,51 @@
-﻿
+﻿ 
 @{
-    ViewData["Title"] = "Giriş Yap";
+	ViewData["Title"] = "Giriş Yap";
+	Layout = "_Layout";
 }
 
-<h2>Giriş Yap</h2>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	    <meta charset="utf-8" />
+		<title>Giriş Yap</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />	   
+</head>
+    <body>
+		<div class="middlebox">
+		<div class="login-container">
+			
+		@using (Html.BeginForm("Login", "Auth", FormMethod.Post))
+		{
+				<div class="logo-container">
+					<img class="logo" src="~/images/logo.png" />
+				</div>
+			<div class="mb-2">
+				<label for="UserName" class="dx-label">Kullanıcı Adı</label>
+				<input type="text" id="UserName" name="UserName" class="form-control"  />
+			</div>
+			<div class="mb-2">
+				<label for="password" class="dx-label">Şifre</label>
+				<input type="password" id="password" name="password" class="form-control"/>
+			</div>
+			<div class="mb-2">
+				<button type="submit" class="btn btn-primary" id="loginButton">Giriş Yap</button>
+			</div>
+			<div class="redirect">
+					<p>Hesabınız yoksa<a href="~/auth/signup"> Kayıt Ol</a></p>
+					
+			</div>
+			
+		}
 
-<form  id="loginForm" class="form-group" method="post">
-    <div class="mb-2">
-        <label for="UserName" class="form-label">Kullanıcı Adı</label>
-        <input type="UserName" id="UserName" name="UserNamedotnet dev-certs https --clean" class="form-control" />
-    </div>
-    <div class="mb-2">
-        <label for="Password" class="form-label">Şifre</label>
-        <input type="password" id="password" name="password" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Giriş Yap</button>
-</form>
 
-<p id="errorMessage" style="color: red; display: none;">Yanlış kullanıcı adı veya şifre!</p>
+		<p id="errorMessage" style="color: red; display: none;">Yanlış kullanıcı adı veya şifre!</p>
 
+		</div>
+	</div>
+	</body>
+</html>
 
+	
+
+       
 

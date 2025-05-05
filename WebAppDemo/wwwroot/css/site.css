@@ -18,9 +18,75 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.middlebox {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 423px;
 }
 
-ul{
-    list-style-type:none;
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signup-container .form-group {
+        width: 100%;
+    }
+
+.logo{
+    width:200px;
+    height:200px;
+}
+.logo-container{
+    margin-left:60px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+.redirect{
+    margin-top:20px;
+}
+    .redirect a {
+        text-decoration: none;
+        color: #004cff;
+        font-style: italic;
+        font-weight:700;
+    }
+#errorMessage {
+    margin-top: 10px;
+    color: red;
 }

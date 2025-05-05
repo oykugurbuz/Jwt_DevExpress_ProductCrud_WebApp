@@ -1,3 +1,4 @@
-﻿@{
-    Layout = "_Layout";
+﻿ @{
+    var isAuthenticated = Context.Request.Cookies["jwt_token"] != null;
+    Layout = isAuthenticated ? "_LayoutAuth" : "_Layout";
 }

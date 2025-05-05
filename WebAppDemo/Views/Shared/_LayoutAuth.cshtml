@@ -1,0 +1,88 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - WebAppDemo</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" /> 
+	<link rel="stylesheet" href="~/WebAppDemo.styles.css" asp-append-version="true" />
+	<!-- DevExtreme CSS -->
+	<link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.5/css/dx.light.css" />
+</head>
+<body>
+	<div class="main_container">
+		
+			<div class="d-flex" style="height: 100vh;"/>
+				<!-- Sol Navigation -->
+				<div class="sidebar bg-light border-end px-3 py-4">
+					<div class="text-center mb-4">
+						<img src="~/images/logo.png" class="logo-img" />
+					</div>
+					<div id="sideMenu"></div>
+				</div>
+
+				<!-- İçerik -->
+				<div class="flex-grow-1 p-4"/>
+		<header>
+			<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+					<div></div>
+					<div id="userDropdown"></div>
+				</div>
+
+			</nav>
+		</header>
+			@RenderBody()	
+	</div>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="https://cdn3.devexpress.com/jslib/24.2.5/js/dx.all.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script>
+		
+		$(function(){
+			$("#userDropdown").dxDropDownButton({
+				icon: "user",
+			    splitButton: false,
+				text: "@Html.Raw(ViewBag.Username)",
+			    dropDownOptions: {
+				width: 180
+			},
+			items:[
+				{
+					text:"Çıkış Yap",
+					icon:"close",
+					onClick: function() {
+						window.location.href = "/Authorize/Logout";
+					}
+				}
+			]
+			})
+		})
+		$(function () {
+			$("#sideMenu").dxMenu({
+				items: [
+					{
+						text: "Ürünler",
+						icon: "box",
+						url: "/Authorize/SecretPage"
+					},
+					{
+						text: "Kategoriler",
+						icon: "folder",
+						url: "/Authorize/CategoryPage"
+					}
+				],
+				orientation: "vertical",
+				width: 200,
+				displayExpr: "text",
+				cssClass: "mySideMenu"
+			});
+		});
+	</script>
+	@RenderSection("Scripts", required: false)
+</body>
+</html>

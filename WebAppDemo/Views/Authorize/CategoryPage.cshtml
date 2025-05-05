@@ -1,0 +1,151 @@
+﻿@model ICollection<WebAppDemo.Models.CategoryViewModel>
+@{
+	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+	ViewBag.Title = "Category Sayfası";
+
+}
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><title></title></head>
+    <body>
+	<div id="addCategory"></div>
+	<div id="categoryPopup"></div>
+	<div id="CategoryList" style="margin-top:20px"></div>
+	</body>
+</html>
+
+@section Scripts{
+	
+	<script>
+
+		// / //Kategori ekle
+		// // // buttonu
+				$(function () {
+					let categoriesGlobal = [];
+
+					$("#addCategory").dxButton({
+						text: "Kategori Ekle",
+						icon: "add",
+						type: "success",
+						onClick: function () {
+							$("#categoryPopup").dxPopup("instance").show();
+						}
+					});
+
+					$("body").append('<div id="categoryPopup"></div>');
+
+					$("#categoryPopup").dxPopup({
+						title: "Kategori Ekle",
+						width: 400,
+						height: "auto",
+						visible: false,
+						showCloseButton: true,
+						contentTemplate: function () {
+							const $contentCategory = $("<div>");
+							const $formContainerCategory = $("<div id='contentCategoryForm'></div>");
+							const $buttonAddCategory = $("<div id='buttonAddCategory' style='margin-top:10px'></div>");
+
+							$contentCategory.append($formContainerCategory, $buttonAddCategory);
+
+							const formInstanceCategory = $formContainerCategory.dxForm({
+								formData: {
+									categoryId: null,
+									categoryName: ""
+								},
+								items: [
+									{
+										dataField: "categoryName",
+										label: { text: "Kategori" },
+										editorType: "dxTextBox",
+										isRequired: true
+									}
+								]
+							}).dxForm("instance");
+
+							$buttonAddCategory.dxButton({
+								text: "Kaydet",
+								type: "success",
+								icon: "save",
+								onClick: function () {
+									const formData = formInstanceCategory.option("formData");
+
+									if (!formData.categoryName) {
+										DevExpress.ui.notify("Lütfen kategori adını giriniz!", "warning", 2000);
+										return;
+									}
+
+									$.ajax({
+										url: "/Authorize/CreateCategory", // ← Controller'daki Action yolu
+										type: "POST",
+										contentType: "application/json",
+										data: JSON.stringify(formData),
+										success: function () {
+											DevExpress.ui.notify("Kategori başarıyla kaydedildi!", "success", 2000);
+											$("#categoryPopup").dxPopup("instance").hide();
+										},
+										error: function (xhr) {
+											console.log("Hata:", xhr.responseText);
+											DevExpress.ui.notify("Hata oluştu", "error", 2000);
+										}
+									});
+								}
+							});
+
+							return $contentCategory;
+						},
+						onHidden: function () {
+							const formInstanceCategory = $("#contentCategoryForm").dxForm("instance");
+							if (formInstanceCategory) {
+								formInstanceCategory.resetValues();
+							}
+						}
+					});
+				});
+		// Kategori Listesi
+		$("#CategoryList").dxDataGrid({
+			dataSource: @Html.Raw(Json.Serialize(Model)),
+			keyExpr: "categoryId",
+			showBorders: true,
+			columnAutoWidth: true,
+			rowAlternationEnabled: true,
+            width:500,
+                    columns: [
+            {
+                dataField: "categoryId",
+                caption: "Kategoriler",
+                lookup:{
+                    dataSource: @Html.Raw(Json.Serialize(ViewBag.Categories)),
+                    valueExpr: "categoryId",
+                    displayExpr: "categoryName"
+                }
+            },
+            {
+                type: "buttons",
+                buttons: [
+                    {
+                        hint: "Sil",
+                        icon: "trash",
+                        onClick: function(e){
+                            if(confirm("Bu ürünü silmek istiyor musunuz?")){
+                                $.post('/Authorize/DeleteCategory', {id: e.row.data.categoryId})
+                                .done(function(){
+                                    DevExpress.ui.notify("Kategori başarıyla silindi","success",1500);
+                                    var dataSource = e.component.getDataSource(); //ui da anında silinmesi için
+                                    dataSource.store().remove(e.row.data.categoryId); // Veri kaynağından sil
+                                    e.component.refresh(); // DataGrid'i yenile
+                                })
+                                .fail(function () {
+                                    DevExpress.ui.notify("Silme işlemi başarısız", "error", 2000);
+                                });
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+
+
+		})
+
+		
+	</script>
+}
