@@ -120,6 +120,27 @@ namespace WebAppDemo.Controllers
             _context.SaveChanges();
             return Ok();
         }
+        [HttpPost]
+        public IActionResult SearchProduct(string searchTerm)
+        {
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(p => p.ProductName.Contains(searchTerm));
+            }
+            var products = query.Select (p => new ProductViewModel
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Price= p.Price,
+                    Description = p.Description,
+                    CategoryName = p.Category.CategoryName,
+                    CategoryId = p.CategoryId
+                }).ToList();
+
+            return Json(products);
+        }
         public IActionResult GetCategories()
         {
             var categories = _context.Categories.Select(c => new
@@ -158,7 +179,7 @@ namespace WebAppDemo.Controllers
 
         public IActionResult CategoryPage()
         {
-            var username = User.Identity.Name;
+            var username = User.Identity?.Name;
             ViewBag.Username = username;
 
             ViewBag.Categories = _context.Categories.Select(c => new { categoryId = c.CategoryId, categoryName = c.CategoryName }).ToList();

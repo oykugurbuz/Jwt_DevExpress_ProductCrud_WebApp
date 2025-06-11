@@ -7,13 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\NewFolder\**" />
     <Compile Remove="wwwroot\lib\images\**" />
-    <Content Remove="Models\NewFolder\**" />
     <Content Remove="wwwroot\lib\images\**" />
-    <EmbeddedResource Remove="Models\NewFolder\**" />
     <EmbeddedResource Remove="wwwroot\lib\images\**" />
-    <None Remove="Models\NewFolder\**" />
     <None Remove="wwwroot\lib\images\**" />
   </ItemGroup>
 
@@ -21,6 +17,8 @@
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.18.4" />
     <PackageReference Include="DevExpress.AspNetCore.Common" Version="24.2.6" />
     <PackageReference Include="DevExpress.AspNetCore.Core" Version="24.2.6" />
+    <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="24.2.6" />
+    <PackageReference Include="DevExpress.Reporting.Core" Version="24.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.3.0" />
@@ -39,6 +37,12 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.AspNetCore.Reporting.v24.2">
+      <HintPath>..\..\..\..\..\..\Program Files\DevExpress 24.2\Components\Offline Packages\devexpress.aspnetcore.reporting\24.2.6\lib\net8.0\DevExpress.AspNetCore.Reporting.v24.2.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

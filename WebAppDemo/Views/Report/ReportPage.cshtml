@@ -1,0 +1,115 @@
+﻿@model WebAppDemo.Models.Report.ReportFilterModel
+@{
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+    ViewBag.Title = "Rapor";
+}
+
+
+<!-- FİLTRE -->
+<div id="formFilter"></div>
+<div class="btnShowReports">
+
+	<button id="showPdfBtn" class="btn btn-secondary mt-2">Raporla(Pdf)</button> 
+    <iframe id="pdfFrame" width="100%" height="800px"></iframe>
+</div>
+
+
+
+ <!-- RAPOR GÖRÜNÜTLEME BURDA-->
+@* <div id="reportPreview" style="margin-top: 30px;"> 
+    <dx-web-document-viewer id="reportViewer"
+                            report-url="ProductReport"
+                            endpoint-url="/CustomWebDocumentViewer"
+                            viewerInitialized="onViewerReady">
+    </dx-web-document-viewer>
+</div>  *@
+@*   <div id="reportViewer" style="margin-top: 30px; height: 600px;"></div>    *@
+
+@section Scripts {
+    <script>
+        var formFilterInstance = $("#formFilter").dxForm({
+            formData: {
+                categoryId: null,
+                minPrice: null,
+                maxPrice: null,
+                startDate: null,
+                endDate: null
+            },
+            items: [
+                { 
+                    dataField: "startDate", 
+                label: { text: "Başlangıç Tarihi" }, 
+                editorType: "dxDateBox" ,
+             
+                
+                },
+                { dataField: "endDate", 
+                label: { text: "Bitiş Tarihi" }, 
+                editorType: "dxDateBox"},
+                {
+                    dataField: "minPrice",
+                    label: { text: "En Düşük Fiyat" },
+                    editorType: "dxNumberBox",
+                    editorOptions: { format: "#,##0.00" }
+                },
+                {
+                    dataField: "maxPrice",
+                    label: { text: "En Yüksek Fiyat" },
+                    editorType: "dxNumberBox",
+                    editorOptions: { format: "#,##0.00" }
+                },
+                {
+                    dataField: "categoryId",
+                    label: { text: "Kategori" },
+                    editorType: "dxSelectBox",
+                    editorOptions: {
+                        dataSource: @Html.Raw(Json.Serialize(ViewBag.Categories)),
+                        displayExpr: "categoryName",
+                        valueExpr: "categoryId"
+                    }
+                }
+            ]
+        }).dxForm("instance");
+
+        //     $("#btnShowReportPdf").on("click", function () {
+        //     const formData = formFilterInstance.option("formData");
+
+        //     fetch('/Report/ExportPdf', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(formData)
+        //     })
+        //     .then(response => response.blob())
+        //     .then(blob => {
+        //         const url = window.URL.createObjectURL(blob);
+        //         window.open(url, '_blank'); 
+        //     })
+        //     .catch(error => {
+        //         console.error("PDF oluşturma hatası:", error);
+        //     });
+        // });
+        document.getElementById("showPdfBtn").addEventListener("click", function () {
+            const formData = formFilterInstance.option("formData");
+            const queryParams = new URLSearchParams();
+
+            for (const key in formData) {
+                const value = formData[key];
+                if (value !== null && value !== "") {
+                    if (value instanceof Date) {
+                        queryParams.append(key, value.toISOString());
+                    } else {
+                        queryParams.append(key, value);
+                    }
+                }
+            }
+
+            const pdfUrl = `/Report/ExportPdf?${queryParams.toString()}`;
+            document.getElementById("pdfFrame").src = pdfUrl;
+        });
+
+
+        
+    </script>
+}

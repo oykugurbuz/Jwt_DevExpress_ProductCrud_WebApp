@@ -1,12 +1,16 @@
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
+using DevExpress.AspNetCore.Reporting.WebDocumentViewer.Native;
+using DevExpress.XtraReports.Services;
+using DevExpress.XtraReports.Web.Extensions;
+using DevExpress.XtraReports.Web.WebDocumentViewer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAppDemo.Models;
+using WebAppDemo.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -16,7 +20,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 var _configuration = builder.Configuration;
-
+//CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -60,7 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-//db
+//DB
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -68,13 +72,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //devexpress
 builder.Services.AddDevExpressControls();
+builder.Services.AddSession();
+builder.Services.AddScoped<IWebDocumentViewerReportResolver, CustomReportProvider>();
+//builder.Services.AddScoped<IReportProvider, CustomReportProvider>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
 //builder.Services.ConfigureReportingServices(configurator =>
 //{
-//    configurator.ConfigureReportDesigner(designer =>
-//    {
-//        designer.RegisterDataSourceWizardConfigFileConnectionStringsProvider();
-//    });
+//    //configurator.UseAsyncEngine();
+
 //});
+
 
 builder.Services.AddControllersWithViews();
 
@@ -93,13 +102,25 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseDevExpressControls();
+
+
+app.UseSession();
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+ 
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=auth}/{action=login}/{id?}");
-
+//app.MapControllerRoute(
+//    name: "WebDocumentViewer",
+//    pattern: "/CustomWebDocumentViewer",
+//    defaults: new { controller = "Report", action = "GetReportData" });
+app.MapControllerRoute(
+    name: "WebDocumentViewer",
+    pattern: "CustomWebDocumentViewer/{action=Viewer}",  // action parametresi eklenmeli, DevExpress WebDocumentViewer'ýn ihtiyacý var
+    defaults: new { controller = "CustomWebDocumentViewer" });
+//app.MapReportingEndpoints();
 app.Run();
