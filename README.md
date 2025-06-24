@@ -21,7 +21,8 @@ Bu proje, oluşturmuş olduğum JwtToken_Project (kullanıcı kimlik doğrulama 
 - Bu token, cookie içerisine (HTTPOnly flag ile) kaydedilir.
 - Cookie tarayıcıda saklandığı için token güvenli bir şekilde taşınır; JavaScript erişemez.
 - Her istek otomatik olarak bu token ile yapılır; kullanıcı kimliği korunur.
-- #Yetki Tabanlı İşlem İzni
+
+#Yetki Tabanlı İşlem İzni
 
 Kullanıcıların hangi işlemleri yapabileceği, yetki (permission) tablosu ve kullanıcıya bağlı izinlerle kontrol edilir.
 Bunun için özel bir [HasPermission] attribute sınıfı tanımlanmıştır.
@@ -87,4 +88,4 @@ Kullanılan Teknolojiler
 ### Yetkili olmayan kullanıcıya geribildirim
 
 ![Yetkili olmayan kullanıcıya geri bildirim görseli](screenshots/statuscode_403.png)
-![Yetkili olmayan Kullanıcıya geri bildirim görseli](screenshots/statuscode_403(2).png)
+![Yetkili olmayan Kullanıcıya geri bildirim görseli](screenshots/statuscode_403_2.png)
