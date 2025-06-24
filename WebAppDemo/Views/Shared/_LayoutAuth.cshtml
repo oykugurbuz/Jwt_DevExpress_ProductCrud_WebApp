@@ -1,5 +1,8 @@
 ﻿@using DevExpress.AspNetCore.Reporting
 @using DevExpress.AspNetCore.Reporting.WebDocumentViewer
+@* @{
+	var isAdmin = User.IsInRole("admin");
+} *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,18 +37,18 @@
 
 		<!-- İçerik -->
 		<div class="flex-grow-1 p-4">
-		<header>
-			<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<header>
+				<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
 
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<div></div>
-					<div id="userDropdown"></div>
-				</div>
+					<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+						<div></div>
+						<div id="userDropdown"></div>
+					</div>
 
-			</nav>
-		</header>
-		@RenderBody()
-	</div>
+				</nav>
+			</header>
+			@RenderBody()
+		</div>
 	</div>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/knockout@3.5.1/build/output/knockout-latest.js"></script> 
@@ -54,61 +57,61 @@
 	<script src="~/lib/xtrareportsjs/js/dx-analytics-core.min.js"></script>
 	<script src="~/lib/xtrareportsjs/js/dx-querybuilder.min.js"></script>
 	<script src="~/lib/xtrareportsjs/js/dx-webdocumentviewer.min.js"></script>
-
-	//
-	 <script src="~/lib/xtrareportsjs/js/globalize.js"></script>
-	@*<script src="~/lib/xtrareportsjs/js/knockout.js"></script>
-	<script src="~/lib/xtrareportsjs/js/jquery.min.js"></script> *@
-	//
+	<script src="~/lib/xtrareportsjs/js/globalize.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script>
 
 		$(function(){
-			$("#userDropdown").dxDropDownButton({
-				icon: "user",
-				splitButton: false,
-				text: "@Html.Raw(ViewBag.Username)",
-				dropDownOptions: {
-				width: 180
-			},
-			items:[
-				{
-					text:"Çıkış Yap",
-					icon:"close",
-					onClick: function() {
-						window.location.href = "/Authorize/Logout";
-					}
-				}
-			]
-			})
+		$("#userDropdown").dxDropDownButton({
+		         icon: "user",
+		         splitButton: false,
+		         text: "@Html.Raw(ViewBag.Username)",
+		         dropDownOptions: {
+		         width: 180
+		},
+		        items:[
+		{
+		         text:"Çıkış Yap",
+		         icon:"close",
+		         onClick: function() {
+		         window.location.href = "/Authorize/Logout";
+		}		}]})
 		})
 		$(function () {
-			$("#sideMenu").dxMenu({
-				items: [
-					{
-						text: "Ürünler",
-						icon: "box",
-						url: "/Authorize/SecretPage"
-					},
-					{
-						text: "Kategoriler",
-						icon: "folder",
-						url: "/Authorize/CategoryPage"
-					},
-					{
-						text: "Rapor",
-						icon: "chart",
-						url: "/Report/ReportPage"
-					}
-				],
+		$("#sideMenu").dxMenu({
+		items: [
+		{
+		       text: "Ürünler",
+		        icon: "product",
+		        url: "/Authorize/SecretPage"
+		},
+		{
+		        text: "Kategoriler",
+		icon: "folder",
+		url: "/Authorize/CategoryPage"
+		},
+		{
+		text: "Rapor",
+		icon: "chart",
+		url: "/Report/ReportPage"
+		},
+		{
+		    text: "Yetkilendirme",
+			icon: "key",
+			url: "/Permission/Assign"
+		}
+		],
 				orientation: "vertical",
 				width: 200,
 				displayExpr: "text",
 				cssClass: "mySideMenu"
 			});
 		});
+		
 	</script>
 	@RenderSection("Scripts", required: false)
 </body>
 </html>
+
+

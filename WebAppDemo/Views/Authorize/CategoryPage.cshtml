@@ -10,6 +10,7 @@
 	<div id="addCategory"></div>
 	<div id="categoryPopup"></div>
 	<div id="CategoryList" style="margin-top:20px"></div>
+    <div id="editCategoryPopUp"></div>
 	</body>
 </html>
 
@@ -83,8 +84,14 @@
 											$("#categoryPopup").dxPopup("instance").hide();
 										},
 										error: function (xhr) {
-											console.log("Hata:", xhr.responseText);
-											DevExpress.ui.notify("Hata oluştu", "error", 2000);
+											if(xhr.status === 403){
+												DevExpress.ui.notify("Kategori ekleme yetkiniz yok","error",2000);
+											}
+											else{
+												console.log("Hata:", xhr.responseText);
+											    DevExpress.ui.notify("Hata oluştu", "error", 2000);
+											}
+											
 										}
 									});
 								}
@@ -121,11 +128,20 @@
             {
                 type: "buttons",
                 buttons: [
+					{
+						hint: "Düzenle",
+						icon: "edit",
+						onClick: function(e){
+							showEditPopup(e.row.data);
+							console.log("categori dizesi:",e.row.data);
+						}
+
+					},
                     {
                         hint: "Sil",
                         icon: "trash",
                         onClick: function(e){
-                            if(confirm("Bu ürünü silmek istiyor musunuz?")){
+                            if(confirm("Bu kategoriyi silmek istiyor musunuz?")){
                                 $.post('/Authorize/DeleteCategory', {id: e.row.data.categoryId})
                                 .done(function(){
                                     DevExpress.ui.notify("Kategori başarıyla silindi","success",1500);
@@ -133,8 +149,14 @@
                                     dataSource.store().remove(e.row.data.categoryId); // Veri kaynağından sil
                                     e.component.refresh(); // DataGrid'i yenile
                                 })
-                                .fail(function () {
-                                    DevExpress.ui.notify("Silme işlemi başarısız", "error", 2000);
+                                .fail(function (xhr) {
+									if(xhr.status === 403){
+										DevExpress.ui.notify("Kategori silme yetkiniz yok", "error", 2000);
+									}
+									else{
+		                                 DevExpress.ui.notify("Silme işlemi başarısız", "error", 2000);
+									}
+                                    
                                 });
                             }
                         }
@@ -145,6 +167,79 @@
 
 
 		})
+		//EDİT
+				let editPopup = null;
+
+		function showEditPopup(categoryData) {
+			const popupContent = $("<div>").attr("id", "editForm");
+
+			if (!editPopup) {
+				editPopup = $("#editCategoryPopUp").dxPopup({
+					title: "Düzenle",
+					width: 500,
+					height: "auto",
+					showCloseButton: true,
+					contentTemplate: function () {
+						popupContent.dxForm({
+							formData: categoryData,
+							items: [
+								{
+									dataField: "categoryName",
+									label: { text: "Kategori Adı" },
+									editorType: "dxTextBox",
+									isRequired: true
+								},
+								{
+									itemType: "button",
+									buttonOptions: {
+										text: "Kaydet",
+										type: "success",
+										icon: "save",
+										onClick: function () {
+											const formInstance = popupContent.dxForm("instance");
+											const formData = formInstance.option("formData");
+
+											if (!formData.categoryName) {
+												DevExpress.ui.notify("Kategori adı boş bırakılamaz!", "warning", 2000);
+												return;
+											}
+
+											$.ajax({
+												url: '/Authorize/EditCategory',
+												type: 'POST',
+												contentType: 'application/json',
+												data: JSON.stringify(formData),
+												success: function () {
+													DevExpress.ui.notify("Kategori başarıyla güncellendi", "success", 2000);
+													editPopup.hide();
+													$("#CategoryList").dxDataGrid("instance").refresh(); // liste güncelle
+												},
+												error: function (xhr) {
+													if(xhr.status === 403){
+														DevExpress.ui.notify("Kategori güncelleme yetkiniz yok","error",2000);
+													}
+													else{
+														DevExpress.ui.notify("Güncelleme sırasında hata oluştu", "error", 2000);
+													}
+													
+												}
+											});
+										}
+									}
+								}
+							]
+						});
+
+						return popupContent;
+					},
+					onHidden: function () {
+						editPopup = null;
+					}
+				}).dxPopup("instance");
+			}
+
+			editPopup.show();
+		}
 
 		
 	</script>

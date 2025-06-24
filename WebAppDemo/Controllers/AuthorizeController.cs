@@ -14,7 +14,7 @@ namespace WebAppDemo.Controllers
         {
             _context = context;
         }
-
+        [HasPermission("Product.Read")]
         public IActionResult SecretPage()
         {
             var username = User.Identity?.Name;
@@ -44,6 +44,7 @@ namespace WebAppDemo.Controllers
         }
 
         [HttpPost]
+        [HasPermission("Product.Create")]
         public IActionResult CreateProduct([FromBody] ProductViewModel model)
         {
             if (!ModelState.IsValid)
@@ -85,6 +86,7 @@ namespace WebAppDemo.Controllers
         }
 
         [HttpPost]
+        [HasPermission("Product.Update")]
         public IActionResult EditProduct([FromBody] Product model)
         {
 
@@ -109,6 +111,7 @@ namespace WebAppDemo.Controllers
         }
 
         [HttpPost]
+        [HasPermission("Product.Delete")]
         public IActionResult DeleteProduct(int id)
         {
             var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
@@ -154,6 +157,7 @@ namespace WebAppDemo.Controllers
         }
 
         [HttpPost]
+        [HasPermission("Category.Create")]
         public IActionResult CreateCategory([FromBody] CategoryViewModel model)
         {
                 if (string.IsNullOrWhiteSpace(model.CategoryName))
@@ -175,8 +179,8 @@ namespace WebAppDemo.Controllers
             _context.SaveChanges();
             return Ok();
         }
-        
 
+        [HasPermission("Category.Read")]
         public IActionResult CategoryPage()
         {
             var username = User.Identity?.Name;
@@ -194,7 +198,7 @@ namespace WebAppDemo.Controllers
         }
 
         [HttpPost]
-
+        [HasPermission("Category.Delete")]
         public IActionResult DeleteCategory(int id)
         {
             var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
@@ -203,6 +207,31 @@ namespace WebAppDemo.Controllers
                 return NotFound();
             }
             _context.Categories.Remove(category);
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        
+        public IActionResult EditCategory(int id)
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+            if(category == null)
+            {
+                return NotFound();
+            }
+            return Json(category);
+           
+        }
+        [HttpPost]
+        [HasPermission("Category.Update")]
+        public IActionResult EditCategory([FromBody]Category model)
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId);
+            if(category == null)
+            {
+                return NotFound();
+            }
+            category.CategoryName = model.CategoryName;
             _context.SaveChanges();
             return Ok();
         }

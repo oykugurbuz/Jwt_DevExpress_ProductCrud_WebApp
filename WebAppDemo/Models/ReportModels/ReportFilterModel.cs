@@ -1,4 +1,4 @@
-﻿namespace WebAppDemo.Models.Report
+﻿namespace WebAppDemo.Models.ReportModels
 {
     public class ReportFilterModel
     {

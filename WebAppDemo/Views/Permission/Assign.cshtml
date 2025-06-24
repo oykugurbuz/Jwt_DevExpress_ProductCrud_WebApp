@@ -1,0 +1,132 @@
+﻿@using Newtonsoft.Json
+@model WebAppDemo.Models.PermissionModels.PermissionAssignViewModel
+@{
+    ViewBag.Title = "Yetki Atama";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+<div class="row">
+    <!-- Sol: Kullanıcılar -->
+    <div class="col-md-5">
+        <div id="userGrid"></div>
+    </div>
+
+    <!-- Sağ: Yetki atama tablosu -->
+    <div class="col-md-7">
+        <form id="assignForm" method="post" asp-controller="Permission" asp-action="Assign">
+            <input type="hidden" name="SelectedUserId" id="SelectedUserId" />
+            <div id="permissionMatrixContainer"></div>
+            <button type="submit" class="btn btn-success mt-3">Kaydet</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let allModules = @Html.Raw(Json.Serialize(Model.Modules));
+        let selectedUserId = 0;
+
+        // Sol: Kullanıcılar
+        $("#userGrid").dxDataGrid({
+            dataSource: @Html.Raw(Json.Serialize(Model.Users)),
+            keyExpr: "userId",
+            columns: [
+                { dataField: "userName", caption: "Kullanıcı Adı" },
+                { dataField: "email", caption: "Email" }
+            ],
+            selection: { mode: "single" },
+            onSelectionChanged: function (e) {
+                if (e.selectedRowsData.length > 0) {
+                    selectedUserId = e.selectedRowsData[0].userId;
+                    $("#SelectedUserId").val(selectedUserId);
+                    loadPermissionsForUser(selectedUserId);
+                }
+            }
+        });
+
+        // Sağ: Yetki Matrisi tablosu
+        function renderPermissionMatrix(assignedIds = []) {
+            const permissionTypes = ["Create", "Read", "Update", "Delete", "Export"];
+
+           
+            let tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Modül</th>
+                            ${permissionTypes.map(p => `<th>${p}</th>`).join("")}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            allModules.forEach(module => {
+                tableHtml += `<tr><td>${module.moduleName}</td>`;
+
+                permissionTypes.forEach(ptype => {
+                   const permission = module.permissions.find(p => p.permissionName.toLowerCase() === ptype.toLowerCase());
+
+
+                    if (permission) {
+                        const isChecked = assignedIds.includes(permission.permissionId);
+                        const id = `perm_${permission.permissionId}`;
+
+                        tableHtml += `
+                            <td class="text-center">
+                                <input type="checkbox" class="form-check-input perm-checkbox" name="AssignedPermissionIds" value="${permission.permissionId}" id="${id}" ${isChecked ? 'checked' : ''}>
+                            </td>
+                        `;
+                    } else {
+                        tableHtml += `<td></td>`;
+                    }
+                });
+
+                tableHtml += `</tr>`;
+            });
+
+            tableHtml += `</tbody></table>`;
+
+            $("#permissionMatrixContainer").html(tableHtml);
+        }
+
+        // Kullanıcının yetkilerini getir ve tabloyu doldur
+        function loadPermissionsForUser(userId) {
+            $.get(`/Permission/GetUserPermissions?userId=${userId}`, function (data) {
+                renderPermissionMatrix(data);
+            });
+        }
+
+      
+        renderPermissionMatrix();
+        //devex ui notify
+        $(function () {
+              const successMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Success"] ?? ""));
+              const errorMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Error"] ?? ""));
+
+              if (successMessage) {
+                  DevExpress.ui.notify({
+                      message: successMessage,
+                      type: "success",
+                      displayTime: 3000,
+                      width: 500,
+                      position: {
+                          my: "bottom center",
+                          at: "bottom center"
+                      }
+                  });
+              }
+
+              if (errorMessage) {
+                  DevExpress.ui.notify({
+                      message: errorMessage,
+                      type: "error",
+                      displayTime: 3000,
+                      width: 500,
+                      position: {
+                          my: "bottom center",
+                          at: "bottom center"
+                      }
+                  });
+              }
+          });
+    </script>
+}

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAppDemo.Models.Report;
 using WebAppDemo.Models.ReportModels;
 using WebAppDemo.Models;
 using WebAppDemo.Report;
@@ -18,6 +17,7 @@ public class ReportController : Controller
 
     // GET ile query parametreleri alacak
     [HttpGet]
+    [HasPermission("Report.Export")]
     public IActionResult ExportPdf([FromQuery] ReportFilterModel model)
     {
         if (model == null)
@@ -64,6 +64,7 @@ public class ReportController : Controller
     }
 
     [HttpPost]
+   
     public IActionResult ExportPdfPost([FromBody] ReportFilterModel model)
     {
         return ExportPdf(model);

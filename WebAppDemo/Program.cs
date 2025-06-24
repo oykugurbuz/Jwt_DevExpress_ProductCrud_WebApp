@@ -7,8 +7,11 @@ using DevExpress.XtraReports.Web.WebDocumentViewer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+//using System.IdentityModel.Claims;
+using System.Security.Claims;
 using System.Text;
 using WebAppDemo.Models;
+using WebAppDemo.Seed;
 using WebAppDemo.Services;
 
 
@@ -46,6 +49,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer =  _configuration["Jwt:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured"))),
+            //
+            RoleClaimType = ClaimTypes.Role
         };
 
         // Token'ý cookie'den al
@@ -90,6 +95,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DbInitializer.SeedPermissions(context);
+}
 
 if (!app.Environment.IsDevelopment())
 {

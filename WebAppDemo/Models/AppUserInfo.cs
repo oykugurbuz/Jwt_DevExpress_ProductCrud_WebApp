@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebAppDemo.Models.PermissionModels;
 
 namespace WebAppDemo.Models
 {
@@ -15,8 +16,12 @@ namespace WebAppDemo.Models
 
         public DateTime? LastLoginDate { get; set; }
 
+        public int AuthorityLevel { get; set; }
+        
         public bool RememberMe { get; set; }
         [EmailAddress]
         public string? Email { get; set; }
+
+        public ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
     }
 }
