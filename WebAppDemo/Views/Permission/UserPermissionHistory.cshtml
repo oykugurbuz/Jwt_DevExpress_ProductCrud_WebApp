@@ -1,42 +1,4 @@
-﻿@* @model IEnumerable<WebAppDemo.Models.PermissionModels.UserPermissionHistoryViewModel> 
-
-@{
-	ViewBag.Title = "Kullanıcı Yetki Geçmişi";
-	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
-}
-
-
-@* <table class="table table-bordered table-striped">
-	<thead class="table-primary">
-		<tr>
-			<th>Yetki verilen kişi</th>
-			<th>Yetki verilen modül</th>
-			<th>Verilen yetki</th>
-			<th>Yetki veren</th>
-			<th>Yetkinin veriliş tarihi</th>
-			<th>Aktif mi?</th>
-			<th>İptal eden</th>
-			<th>İptal edilme tarihi</th>	
-		</tr>
-	</thead>
-	<tbody>
-		@foreach(var item in Model)
-		{
-			<tr>
-				<td>@item.User</td>
-				<td>@item.Module</td>
-				<td>@item.Permission</td>
-				<td>@item.GivenBy</td>
-				<td>@item.GivenDate</td>
-				<td>@item.IsActive ? "Aktif" : "Pasif"</td>
-				<td>@item.RevokedByUser</td>
-				<td>@item.RevokedDate</td>
-			</tr>
-		}
-	</tbody>
-	
-
-</table> *@
+﻿
 @model IEnumerable<WebAppDemo.Models.PermissionModels.UserPermissionFilterModel>
 @{
     ViewBag.Title = "Kullanıcı Yetki Geçmişi";
@@ -90,7 +52,7 @@
         </tr>
     </thead>
     <tbody id="permissionTableBody">
-        <!-- AJAX ile doldurulacak -->
+       
     </tbody>
 </table>
 
