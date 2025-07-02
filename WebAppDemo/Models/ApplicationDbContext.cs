@@ -45,6 +45,13 @@ namespace WebAppDemo.Models
                 .WithMany()                                       // İzin veren kullanıcıda ters koleksiyon yok
                 .HasForeignKey(up => up.GivenByUserId)            // Foreign key GivenByUserId
                 .OnDelete(DeleteBehavior.Restrict);               // İzin veren kullanıcı silinemez (silme engellenir)
+          
+            // UserPermission - AppUserInfo (RevokedByUser) ilişkisi
+            modelBuilder.Entity<UserPermission>()
+                .HasOne(up => up.RevokedByUser)
+                .WithMany()
+                .HasForeignKey(up=> up.RevokedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);              
 
             // UserPermission - Permission ilişkisi
             modelBuilder.Entity<UserPermission>()

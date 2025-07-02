@@ -17,5 +17,12 @@
         public DateTime GivenDate { get; set; } = DateTime.UtcNow;
 
         public bool IsActive { get; set; } = true;
+
+        //for logging
+
+        public DateTime? RevokedDate { get; set; }
+
+        public int?  RevokedByUserId { get; set; }
+        public AppUserInfo RevokedByUser { get; set; }
     }
 }

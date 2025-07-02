@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAppDemo.Models;
 
@@ -11,9 +12,11 @@ using WebAppDemo.Models;
 namespace WebAppDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628135140_RevokedByUser")]
+    partial class RevokedByUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,8 +224,7 @@ namespace WebAppDemo.Migrations
 
                     b.HasOne("WebAppDemo.Models.AppUserInfo", "RevokedByUser")
                         .WithMany()
-                        .HasForeignKey("RevokedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("RevokedByUserId");
 
                     b.HasOne("WebAppDemo.Models.AppUserInfo", "User")
                         .WithMany("UserPermissions")

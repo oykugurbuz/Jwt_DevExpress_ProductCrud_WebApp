@@ -4,6 +4,7 @@
     ViewBag.Title = "Yetki Atama";
     Layout = "~/Views/Shared/_LayoutAuth.cshtml";
 }
+
 <div class="row">
     <!-- Sol: Kullanıcılar -->
     <div class="col-md-5">
@@ -19,7 +20,9 @@
         </form>
     </div>
 </div>
-
+<div>
+    <a href="/Permission/UserPermissionHistory" class="btn btn-primary">Kullanıcı Yetki Geçmişi</a>
+</div>
 @section Scripts {
     <script>
         let allModules = @Html.Raw(Json.Serialize(Model.Modules));

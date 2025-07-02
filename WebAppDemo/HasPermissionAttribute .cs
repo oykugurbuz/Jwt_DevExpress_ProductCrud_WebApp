@@ -17,7 +17,7 @@ public class HasPermissionAttribute : Attribute, IAuthorizationFilter
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         
-        var dbContext = context.HttpContext.RequestServices.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
+        var dbContext = context.HttpContext.RequestServices.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext; 
 
         var userName = context.HttpContext.User.Identity?.Name;
 
@@ -40,7 +40,7 @@ public class HasPermissionAttribute : Attribute, IAuthorizationFilter
         var userPermissionIds = dbContext.UserPermissions
             .Where(p => p.UserId == user.Id && p.IsActive)
             .Select(p => p.PermissionId)
-            .ToList();
+            .ToList(); 
 
        // Product.Create gibi gelen yetki ifadesi "Product" ve "Create" olarak ayrıştırılır.
         var parts = _requiredPermission.Split('.');

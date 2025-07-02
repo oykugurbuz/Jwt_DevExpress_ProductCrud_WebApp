@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAppDemo.Models;
 
@@ -11,9 +12,11 @@ using WebAppDemo.Models;
 namespace WebAppDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250626143148_Log")]
+    partial class Log
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,8 +155,6 @@ namespace WebAppDemo.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.HasIndex("RevokedByUserId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("UserPermissions");
@@ -219,11 +220,6 @@ namespace WebAppDemo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebAppDemo.Models.AppUserInfo", "RevokedByUser")
-                        .WithMany()
-                        .HasForeignKey("RevokedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("WebAppDemo.Models.AppUserInfo", "User")
                         .WithMany("UserPermissions")
                         .HasForeignKey("UserId")
@@ -233,8 +229,6 @@ namespace WebAppDemo.Migrations
                     b.Navigation("GivenByUser");
 
                     b.Navigation("Permission");
-
-                    b.Navigation("RevokedByUser");
 
                     b.Navigation("User");
                 });

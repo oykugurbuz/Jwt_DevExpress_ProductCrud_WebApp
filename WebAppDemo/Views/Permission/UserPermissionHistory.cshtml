@@ -1,0 +1,197 @@
+﻿@* @model IEnumerable<WebAppDemo.Models.PermissionModels.UserPermissionHistoryViewModel> 
+
+@{
+	ViewBag.Title = "Kullanıcı Yetki Geçmişi";
+	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+
+
+@* <table class="table table-bordered table-striped">
+	<thead class="table-primary">
+		<tr>
+			<th>Yetki verilen kişi</th>
+			<th>Yetki verilen modül</th>
+			<th>Verilen yetki</th>
+			<th>Yetki veren</th>
+			<th>Yetkinin veriliş tarihi</th>
+			<th>Aktif mi?</th>
+			<th>İptal eden</th>
+			<th>İptal edilme tarihi</th>	
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var item in Model)
+		{
+			<tr>
+				<td>@item.User</td>
+				<td>@item.Module</td>
+				<td>@item.Permission</td>
+				<td>@item.GivenBy</td>
+				<td>@item.GivenDate</td>
+				<td>@item.IsActive ? "Aktif" : "Pasif"</td>
+				<td>@item.RevokedByUser</td>
+				<td>@item.RevokedDate</td>
+			</tr>
+		}
+	</tbody>
+	
+
+</table> *@
+@model IEnumerable<WebAppDemo.Models.PermissionModels.UserPermissionFilterModel>
+@{
+    ViewBag.Title = "Kullanıcı Yetki Geçmişi";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+<div class="card col-sm-12 p-4">
+    <form id="filterForm" class="form">
+        <label>Yetki Verilen kişi </label><select id="UserName" name="UserName" class="form-select mt-2"><option value="">Kullanıcı Seçiniz</option></select><br />
+        <label>Modül </label><select id="ModuleName" name="ModuleName" class="form-select mt-2"><option value="">Modül Seçiniz</option></select><br />
+        <label>Yetki  </label><select id="PermissionName" name="PermissionName" class="form-select mt-2"><option value="">Önce modül seçiniz</option></select><br />
+        <label>Yetki Veren</label><select id="GivenBy" name="GivenBy" class="form-select mt-2"><option value="">Yetki Veren Kullanıcıyı Seçiniz</option></select><br />
+		<label>
+			Yetkinin verildiği tarih aralığı</label>
+         <div class="mt-2 mb-2">
+            <input type="date" id="GivenDateStart" name="GivenDateStart" class="" />
+            <input type="date" id="GivenDateEnd" name="GivenDateEnd" /><br />
+        </div>
+        
+
+        <label>Aktif mi</label><select id="IsActive" name="IsActive" class="form-select mt-2">
+            <option value="">Aktiflik</option>
+            <option value="true">Aktif</option>
+            <option value="false">Pasif</option>
+        </select> <br />
+
+
+        <div id="revokedFilters" style="display:none">
+            <label>İptal eden</label>
+            <select id="RevokedByUser" name="RevokedByUser" class="form-select mt-2"><option value="">İptal Eden Kullanıcıyı Seçiniz</option></select><br />
+            <label>İptal tarihi aralığı </label>
+            <input type="date" id="RevokedDateStart" name="RevokedDateStart" />
+            <input type="date" id="RevokedDateEnd" name="RevokedDateEnd" />
+        </div><br />
+
+        <button type="submit" class="btn btn-primary btn-lm">Filtrele</button>
+    </form>
+ 
+</div>
+
+<table class="table table-bordered table-striped mt-4">
+    <thead class="table-primary">
+        <tr>
+            <th>Yetki verilen kişi</th>
+            <th>Modül</th>
+            <th>Yetki</th>
+            <th>Yetki veren</th>
+            <th>Veriliş tarihi</th>
+            <th>Aktif mi?</th>
+            <th>İptal eden</th>
+            <th>İptal tarihi</th>
+        </tr>
+    </thead>
+    <tbody id="permissionTableBody">
+        <!-- AJAX ile doldurulacak -->
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Kullanıcılar
+            $.get('/Permission/GetUserList', function (data) {
+                console.log("UserList :",data);
+                fillSelect($('#UserName'), data);
+                fillSelect($('#GivenBy'), data);
+                fillSelect($('#RevokedByUser'), data);
+            });
+
+            // Modüller
+            $.get('/Permission/GetModuleList', function (data) {
+                fillSelect($('#ModuleName'), data);
+            });
+
+            // Modül değişince yetkileri çek
+            $('#ModuleName').change(function () {
+                var moduleName = $(this).val();
+                if (moduleName) {
+                    $.get('/Permission/GetPermissionListByModule?moduleName=' + moduleName, function (data) {
+                        fillSelect($('#PermissionName'), data);
+                    });
+                } else {
+                    $('#PermissionName').html('<option value="">Önce Modül Seçiniz</option>');
+                }
+            });
+
+            // Aktiflik seçimi
+            $('#IsActive').change(function () {
+                if ($(this).val() === "false") {
+                    $('#revokedFilters').show();
+                } else {
+                    $('#revokedFilters').hide();
+                    $('#RevokedByUser').val('');
+                    $('#RevokedDateStart').val('');
+                    $('#RevokedDateEnd').val('');
+                }
+            });
+
+            function fillSelect($select, data) {
+                $select.html('<option value="">Seç</option>');
+                data.forEach(item => {
+                    $select.append(`<option value="${item.value}">${item.text}</option>`);
+                });
+            }
+
+            // Filtrele butonu
+            $('#filterForm').submit(function (e) {
+                e.preventDefault();
+
+                var filterData = {
+                        UserName: $('#UserName').val(),
+                        ModuleName: $('#ModuleName').val(),
+                        PermissionName: $('#PermissionName').val(),
+                        GivenBy: $('#GivenBy').val(),
+                        GivenDateStart: $('#GivenDateStart').val() === "" ? null : $('#GivenDateStart').val(),
+                        GivenDateEnd: $('#GivenDateEnd').val() === "" ? null : $('#GivenDateEnd').val(),
+                        IsActive:  $('#IsActive').val() === "" ? null : $('#IsActive').val() === "true",
+                        RevokedByUser: $('#RevokedByUser').val(),
+                        RevokedDateStart: $('#RevokedDateStart').val() === "" ? null : $('#RevokedDateStart').val(),
+                        RevokedDateEnd: $('#RevokedDateEnd').val() === "" ? null : $('#RevokedDateEnd').val()
+                };
+                console.log("Gönderilen filterData:", filterData);
+                $.ajax({
+                    url: '/Permission/FilterUserPermissions',
+                    method: 'POST',                 
+                    contentType: 'application/json', 
+                    data: JSON.stringify(filterData),
+                    success: function (data) {
+                        var tbody = $('#permissionTableBody');
+                        tbody.empty();
+
+                        if (data.length === 0) {
+                            tbody.append('<tr><td colspan="8" class="text-center">Kayıt yok</td></tr>');
+                            return;
+                        }
+
+                        data.forEach(function (item) {
+                            var row = `<tr>
+                                <td>${item.user || ''}</td>
+                                <td>${item.module || ''}</td>
+                                <td>${item.permission || ''}</td>
+                                <td>${item.givenBy || ''}</td>
+                                <td>${item.givenDate ? new Date(item.givenDate).toLocaleDateString() : ''}</td>
+                                <td>${item.isActive ? 'Evet' : 'Hayır'}</td>
+                                <td>${item.revokedByUser || ''}</td>
+                                <td>${item.revokedDate ? new Date(item.revokedDate).toLocaleDateString() : ''}</td>
+                            </tr>`;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function () {
+                        alert("Filtreleme sırasında hata oluştu.");
+                    }
+                });
+            });
+        });
+    </script>
+}
+
