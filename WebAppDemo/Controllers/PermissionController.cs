@@ -161,7 +161,7 @@ namespace WebAppDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> FilterUserPermissions([FromBody] UserPermissionFilterModel filter)
         {
-            if(filter== null)
+            if(filter == null)
             {
                 return BadRequest("filtre null");
             }
@@ -249,7 +249,7 @@ namespace WebAppDemo.Controllers
             return Json(modules);
         }
 
-        //modüle göre izinleri getiren endpoint
+        //modüle göre izinler
         public IActionResult GetPermissionListByModule(string moduleName)
         {
             var permission = 

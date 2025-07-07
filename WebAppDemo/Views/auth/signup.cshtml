@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Kayıt Ol";
-	Layout = "_Layout";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <html>
 <head><title></title></head>
@@ -40,3 +40,49 @@
 </body>
 	
 </html>
+
+@section Scripts {
+	<script>
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+		  
+			const signupForm = document.getElementById('signupForm');
+			if (signupForm) {
+				signupForm.addEventListener('submit', async function (e) {
+					e.preventDefault();
+					console.log("Signup event tetiklendi!");
+					const username = document.getElementById('UserName').value;
+					const password = document.getElementById('password').value;
+					const email = document.getElementById('email').value;
+
+					const data = {
+						UserName: username,
+						Password: password,
+						Email: email
+					};
+
+					try {
+						const response = await fetch('http://localhost:5269/api/Auth/signup', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Accept': 'application/json'
+							},
+							body: JSON.stringify(data)
+						});
+
+						if (response.ok) {
+							window.location.href = '/auth/login';
+						} else {
+							alert('Kayıt işlemi başarısız. Kullanıcı adı zaten alınmış olabilir.');
+						}
+					} catch (error) {
+						console.error('Kayıt sırasında hata oluştu:', error);
+					}
+				});
+			}
+		});
+	</script>
+
+}
