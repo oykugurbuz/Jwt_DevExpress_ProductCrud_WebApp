@@ -27,6 +27,7 @@ Bu proje, oluşturmuş olduğum JwtToken_Project (https://github.com/oykugurbuz/
 Kullanıcıların hangi işlemleri yapabileceği, yetki (permission) tablosu ve kullanıcıya bağlı izinlerle kontrol edilir.
 Bunun için özel bir [HasPermission] attribute sınıfı tanımlanmıştır.
 
+
 ### Örnek kullanım:
 ```csharp
 [HasPermission("Product.Create")]
@@ -73,6 +74,34 @@ Tüm filtreleme işlemi Entity Framework ile backend’de yapılır.
 - Entity Framework Core
 
 - Cookie tabanlı JWT saklama
+## Excel ile Toplu Kullanıcı Ekleme
+Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleyebilme özelliği bulunmaktadır. Bu sayede çok sayıda kullanıcı kaydını hızlıca oluşturabilirsiniz.
+### Nasıl Kullanılır?
+- Excel ile Kullanıcı Kaydı başlığı altında bulunan form aracılığıyla .xlsx uzantılı Excel dosyanızı seçip yükleyebilirsiniz.
+
+- Excel dosyasında her satır bir kullanıcıyı temsil eder ve aşağıdaki sütunlar zorunludur:
+
+| Sütun                  | Açıklama                          |
+| ---------------------- | --------------------------------- | 
+| 1                      | Kullanıcı Adı                     |
+| 2                      | Kimlik Numarası                   | 
+| 3                      | E-mail                            |
+| 4                      | Parola                            | 
+
+- Dosya yüklendikten sonra, sistem dosyadaki kullanıcıları tek tek API'ye göndererek kayıt eder.
+- Eğer bazı kayıtlar hatalı ise kullanıcıya hatalı kayıt sayısını döndürür ve "Hatalı Kayıtları İndir" butonu aktif olur. Bu sayede hatalı eklenen kullanıcıların listesi excel formatında döndürülür.
+
+### Hatalı Kayıtlar
+- Hatalı kayıtlar kullanıcı adı, kimlik numarası, email ve parola bilgileri ile birlikte Excel olarak indirilebilir.
+
+- Böylece hatalar kolayca tespit edilip düzeltilebilir.
+
+### Teknik Detaylar
+- Excel dosyası OfficeOpenXml kütüphanesi ile okunur.
+
+- Her satırdaki kullanıcı bilgileri SignupModel ile API'ye JSON olarak gönderilir.
+
+- API'den dönen başarısız kayıtlar TempData üzerinden View'e taşınır ve kullanıcıya bildirilir.
 
 ## Uygulama Arayüzü
 

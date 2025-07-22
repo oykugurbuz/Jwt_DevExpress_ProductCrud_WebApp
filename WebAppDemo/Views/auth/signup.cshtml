@@ -15,14 +15,22 @@
 				<div class="mb-2">
 					<label for="UserName" class="form-label">Kullanıcı Adı</label>
 					<input type="text" id="UserName" name="UserName" class="form-control" />
+					<div id="UserNameFeedback" class="invalid-feedback"></div>
 				</div>
 				<div class="mb-2">
 					<label for="email" class="form-label">E-mail</label>
 					<input type="text" id="email" name="email" class="form-control" />
+					<div id="emailFeedback" class="invalid-feedback"></div>
+				</div>
+				<div class="mb-2">
+					<label for="IdentityNumber" class="form-label">Tc.Kimlik Numarası</label>
+					<input type="text" id="IdentityNumber" name="IdentityNumber" class="form-control"/>
+					<div id="IdentityNumberFeedback" class="invalid-feedback"></div>
 				</div>
 				<div class="mb-2">
 					<label for="Password" class="form-label">Şifre</label>
 					<input type="password" id="password" name="password" class="form-control" />
+					<div  id ="passwordFeedback" class="invalid-feedback"></div>
 				</div>
 				
 
@@ -41,25 +49,42 @@
 	
 </html>
 
+
 @section Scripts {
 	<script>
-
-
 		document.addEventListener("DOMContentLoaded", function () {
-		  
 			const signupForm = document.getElementById('signupForm');
+
+			// Field adlarını normalize eden yardımcı fonksiyon
+			const normalizeFieldId = (fieldName) => {
+				switch (fieldName.toLowerCase()) {
+					case "username": return "UserName";
+					case "identitynumber": return "IdentityNumber";
+					case "password": return "password";
+					case "email": return "email";
+					default: return fieldName;
+				}
+			};
+
 			if (signupForm) {
 				signupForm.addEventListener('submit', async function (e) {
 					e.preventDefault();
-					console.log("Signup event tetiklendi!");
-					const username = document.getElementById('UserName').value;
-					const password = document.getElementById('password').value;
-					const email = document.getElementById('email').value;
 
+					// Önce tüm önceki hataları temizle
+					const fields = ['UserName', 'password', 'IdentityNumber', 'email'];
+					fields.forEach(f => {
+						const input = document.getElementById(f);
+						const feedback = document.getElementById(`${f}Feedback`);
+						if (input) input.classList.remove("is-invalid");
+						if (feedback) feedback.innerText = '';
+					});
+
+					// Form verileri
 					const data = {
-						UserName: username,
-						Password: password,
-						Email: email
+						UserName: document.getElementById('UserName').value,
+						Password: document.getElementById('password').value,
+						Email: document.getElementById('email').value,
+						IdentityNumber: document.getElementById('IdentityNumber').value
 					};
 
 					try {
@@ -72,10 +97,25 @@
 							body: JSON.stringify(data)
 						});
 
+						const result = await response.json();
+
 						if (response.ok) {
 							window.location.href = '/auth/login';
 						} else {
-							alert('Kayıt işlemi başarısız. Kullanıcı adı zaten alınmış olabilir.');
+							// Hata detaylarını al ve alanlara dağıt
+							if (result.errors) {
+								Object.entries(result.errors).forEach(([field, messages]) => {
+									const inputId = normalizeFieldId(field);
+									const input = document.getElementById(inputId);
+									const feedback = document.getElementById(`${inputId}Feedback`);
+
+									if (input) input.classList.add("is-invalid");
+									if (feedback) feedback.innerText = messages.join(', ');
+								});
+							} else if (result.message) {
+								// Genel bir hata varsa alert göster
+								alert(result.message);
+							}
 						}
 					} catch (error) {
 						console.error('Kayıt sırasında hata oluştu:', error);
@@ -84,5 +124,5 @@
 			}
 		});
 	</script>
-
 }
+

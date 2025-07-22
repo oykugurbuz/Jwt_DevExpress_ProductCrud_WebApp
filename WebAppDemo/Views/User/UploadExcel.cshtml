@@ -1,0 +1,97 @@
+﻿@{
+	ViewBag.Title = "Excel ile Kullanıcı Ekleme";
+	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+
+<h2>Excel ile Kullanıcı Ekleme</h2><br />
+<div class="row">
+    <div id="userList" class="col-md-8">
+        <h4>Kullanıcı Listesi</h4>
+        <table id="userTable" class="table table-responsive-md table-primary" border="1">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Kullanıcı Adı</th>
+
+                    <th id="identityHeader">Kimlik Numarası</th>
+
+                    <th>Email</th>
+                    <th>Yetki Seviyesi</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h4>Excel ile Kullanıcı Kaydı</h4>
+        <form asp-controller="User" asp-action="UploadExcel" method="post" enctype="multipart/form-data" class="form-control" style="background-color: cornflowerblue;border-radius: 15px;">
+
+            <input type="file" name="excelFile" accept=".xlsx" required /><br />
+            <button type="submit" class="btn btn-light mt-3">Yükle</button>
+
+        </form>
+    </div>
+</div>
+
+
+
+@if (ViewBag.UploadMessage != null)
+{
+    <p style="color: green">@ViewBag.UploadMessage</p>
+}
+
+@if (ViewBag.UploadError != null)
+{
+    <p style="color: red">@ViewBag.UploadError</p>
+}
+
+
+@if (TempData.Peek("ErrorUsers") != null) // peek kulanımının sebebi , TempData'daki veriyi silmeden kontrol etmek .Normalde TempData["anahtar"] bir kez erişildiğinde silinir. Yani TempData bir defalık kullanımlıktır.
+{
+	<a class="btn btn-warning" href="/User/DownloadErrorExcel" style="margin-top:10px;">Hatalı Kayıtları İndir</a>
+}
+
+@section Scripts{
+	<script>
+        const currentAuthorityLevel = '@(ViewBag.AuthorityLevel ?? "")'; 
+                 document.addEventListener("DOMContentLoaded", function () {
+           
+
+            // Kimlik sütun başlığını seç
+            const identityHeader = document.getElementById("identityHeader");
+
+            // Yetki seviyesi 1 değilse gizle, 1 ise göster
+            if (currentAuthorityLevel === "1") {
+                identityHeader.style.display = "";
+            } else {
+                identityHeader.style.display = "none";
+            }
+
+            fetch('/User/UserList')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#userTableBody");
+                    tbody.innerHTML = "";
+
+                    data.forEach(user => {
+                        let row = "<tr>";
+                        row += `<td>${user.id}</td>`;
+                        row += `<td>${user.userName}</td>`;
+
+                        if (currentAuthorityLevel === "1") {
+                            row += `<td>${user.identityNumber ?? ""}</td>`;
+                        }
+
+                        row += `<td>${user.email}</td>`;
+                        row += `<td>${user.authorityLevelDescription}</td>`;
+                        row += "</tr>";
+
+                        tbody.insertAdjacentHTML("beforeend", row);
+                    });
+                })
+                .catch(err => console.error('Kullanıcı listesi yüklenirken hata:', err));
+        });
+
+        
+	</script>
+}

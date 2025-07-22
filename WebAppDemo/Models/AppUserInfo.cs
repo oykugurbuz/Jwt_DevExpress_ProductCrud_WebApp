@@ -1,13 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using WebAppDemo.Models.PermissionModels;
 
 namespace WebAppDemo.Models
 {
+      
+
     public class AppUserInfo
     {
         public int Id { get; set; }
+        
         public string? UserName { get; set; } //username
+
+        
+        public long IdentityNumber { get; set; }
+        
         [DataType(DataType.Password)]
+        
         public string? Password { get; set; }
         public string? UserTypeName { get; set; } //admin-user vs
 
@@ -20,6 +29,7 @@ namespace WebAppDemo.Models
         
         public bool RememberMe { get; set; }
         [EmailAddress]
+        [Required]
         public string? Email { get; set; }
 
         public ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();

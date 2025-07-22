@@ -91,7 +91,6 @@ namespace WebAppDemo.Controllers
             {
                 return RedirectToAction("login", "auth");
             }
-            ViewBag.ErrorMessage = "Kayıt işlemi başarısız. Kullanıcı adı zaten alınmış olabilir.";
             return View();
         }
 

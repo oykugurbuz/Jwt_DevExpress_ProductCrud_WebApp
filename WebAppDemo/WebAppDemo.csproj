@@ -19,6 +19,7 @@
     <PackageReference Include="DevExpress.AspNetCore.Core" Version="24.2.6" />
     <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="24.2.6" />
     <PackageReference Include="DevExpress.Reporting.Core" Version="24.2.6" />
+    <PackageReference Include="EPPlus" Version="4.5.3.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.3.0" />

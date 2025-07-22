@@ -14,7 +14,7 @@ namespace WebAppDemo.Controllers
         {
             _context = context;
         }
-        [HasPermission("Product.Read")]
+       [HasPermission("Product.Read")]
         public IActionResult SecretPage()
         {
             var username = User.Identity?.Name;
