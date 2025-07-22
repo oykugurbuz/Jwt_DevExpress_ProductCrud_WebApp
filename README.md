@@ -66,14 +66,7 @@ Modül seçildiğinde ilgili yetkiler otomatik doldurulur.
 
 #### Server-side filtreleme: 
 Tüm filtreleme işlemi Entity Framework ile backend’de yapılır.
-## Kullanılan Teknolojiler
-- ASP.NET Core MVC (.NET 8)
 
-- DevExpress JavaScript ve Reporting v24.2+
-
-- Entity Framework Core
-
-- Cookie tabanlı JWT saklama
 ## Excel ile Toplu Kullanıcı Ekleme
 Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleyebilme özelliği bulunmaktadır. Bu sayede çok sayıda kullanıcı kaydını hızlıca oluşturabilirsiniz.
 ### Nasıl Kullanılır?
@@ -102,7 +95,14 @@ Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleye
 - Her satırdaki kullanıcı bilgileri SignupModel ile API'ye JSON olarak gönderilir.
 
 - API'den dönen başarısız kayıtlar TempData üzerinden View'e taşınır ve kullanıcıya bildirilir.
+## Kullanılan Teknolojiler
+- ASP.NET Core MVC (.NET 8)
 
+- DevExpress JavaScript ve Reporting v24.2+
+
+- Entity Framework Core
+
+- Cookie tabanlı JWT saklama
 ## Uygulama Arayüzü
 
 ### Giriş Ekranı görünümü: 
@@ -152,3 +152,20 @@ Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleye
 #### Kullanıcı Yetki Geçmişi Takibi ve Filtreleme Modülü
 
 ![Kullanıcı Yetki Geçmişi Takibi ve Filtreleme Modülü görseli](screenshots/PermissionLog.png)
+
+### Excel ile Toplu Kullanıcı Ekleme
+
+#### Excel İle Toplu Kullanıcı Ekleme Sayfası (Tam Yetkiye Sahip Kullanıcılar İçin)
+Tam yetkiye sahip kullanıcılarda Kullanıcı Listesindeki Kimlik Numarası sütunu bulunur.
+![Excel ile Toplu Kullanıcı Ekleme Görseli](screenshots/excelimport_page.png)
+
+#### Excel İle Toplu Kullanıcı Ekleme Sayfası (Tam Yetkiye Sahip Olmayan Kullanıcılar İçin)
+Tam yetkiye sahip olmayan kullanıcılarda Kullanıcı Listesindeki Kimlik Numarası sütunu bulunmaz.
+![Excel ile Toplu Kullanıcı Ekleme Görseli](screenshots/AuthorityLevel_excelimport.png)
+
+#### Hatalı Kayıtlar 
+![Hatalı Kayıtlar Görseli](screenshots/error_excelimport.png)
+
+#### Örnek Excel Şablonu
+
+[downloads/YeniKullaniciListesi.xlsx](downloads/YeniKullaniciListesi.xlsx)
