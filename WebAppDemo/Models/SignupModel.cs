@@ -11,5 +11,7 @@ namespace WebAppDemo.Models
 
         public string? Password { get; set; }
         public long IdentityNumber { get; set; }
+
+        public int? AuthorityLevel { get; set; }
     }
 }

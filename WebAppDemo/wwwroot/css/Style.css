@@ -1,0 +1,27 @@
+﻿body {
+}
+.welcomeCard {
+    /*// width: 33%;*/
+    height: 33%;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    padding-top: 30px;
+    padding-left: 30px;
+    background-color: rgba(51,122,183,255);
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    
+}
+
+.welcomeCard p {
+        height: min-content;
+        font-family: "Signika", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings: "GRAD" 0;
+        font-size: 30px;
+        color: rgba(248,249,250,255);
+}
+    .welcomeCard:hover {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }

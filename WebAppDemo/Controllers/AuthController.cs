@@ -73,7 +73,7 @@ namespace WebAppDemo.Controllers
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
-            return RedirectToAction("SecretPage","Authorize" );
+            return RedirectToAction("HomePage","Authorize" );
         }
 
       

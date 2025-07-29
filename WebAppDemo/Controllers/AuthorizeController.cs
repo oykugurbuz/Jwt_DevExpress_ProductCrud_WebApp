@@ -14,8 +14,14 @@ namespace WebAppDemo.Controllers
         {
             _context = context;
         }
+        public IActionResult HomePage()
+        {
+            var username = User.Identity?.Name;
+            ViewBag.Username = username;
+            return View();
+        }
        [HasPermission("Product.Read")]
-        public IActionResult SecretPage()
+        public IActionResult ProductPage()
         {
             var username = User.Identity?.Name;
             ViewBag.Username = username;

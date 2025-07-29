@@ -1,0 +1,82 @@
+﻿@model List<WebAppDemo.Models.ExcelImportModels.UserImportResult>
+@{
+	ViewData["Title"] = "ImportResult";
+	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+
+}
+
+<h2>Aktarılacak Bilgiler</h2>
+
+<table class="table table-hover" id="userTable">
+	<thead>
+		<tr>
+			<th>TC Kimlik No</th>
+			<th>Kullanıcı Adı</th>
+			<th>E-Mail</th>
+			<th>Şifre</th>
+			<th>Kullanıcı Seviyesi</th>
+			<th>Hata Mesajı</th>
+		</tr>
+	</thead>
+	<tbody class="userTableBody">
+		@foreach (var result in Model)
+		{
+			var user = result.User;
+
+			<tr>
+				<td>@user.IdentityNumber</td>
+				<td>@user.UserName</td>
+				<td>@user.Email</td>
+				<td>@user.Password</td>
+				<td>@user.AuthorityLevel</td>
+				@if (!string.IsNullOrEmpty(result.Message))
+				{
+					<td style="color: red">@result.Message</td>
+					
+				}
+				else
+				{
+					<td style="color: green"></td>
+				}
+			</tr>
+		}
+	</tbody>
+  
+</table>
+
+<button class="btn btn-success" id="saveBtn">Kaydet</button>
+
+@section Scripts{
+	<script>
+		document.getElementById("saveBtn").addEventListener("click",function(){
+			const rows= document.querySelectorAll("#userTableBody tr"); //tbody içindeki bütün satırları
+			let users=[];
+
+			rows.forEach(row=> {
+				const cells = row.querySelectorAll("td");
+
+				let user = {
+					identityNumber : cells[0].innerText,
+					userName: cells[1].innerText,
+					email: cells[2].innerText,
+					password : cells[3].innerText,
+					authorityLevel: cells[4].innerText
+				};
+				users.push(user);
+			});
+
+			const response = fetch('/User/SaveUsers',{
+				method: 'POST',
+				headers: {
+					'ContentType': 'application/json'
+				},
+				body: JSON.stringify(users)
+
+			});
+
+			const result = await response.json();
+			alert(result.message);
+			location.reload();
+		});
+	</script>
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System.Security.Claims;
@@ -8,6 +9,7 @@ using WebAppDemo.Models.PermissionModels;
 
 namespace WebAppDemo.Controllers
 {
+    [Authorize]
     public class PermissionController : Controller
     {
         private readonly ApplicationDbContext _context;

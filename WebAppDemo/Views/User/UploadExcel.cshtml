@@ -1,97 +1,112 @@
-﻿@{
-	ViewBag.Title = "Excel ile Kullanıcı Ekleme";
-	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+﻿
+@{
+    ViewData["Title"] = "Excel Import";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+    var alanlar = new List<string>
+    {
+        "TC Kimlik Numarası","Kullanıcı Adı","E-Mail","Şifre","Kullanıcı Seviyesi"
+    };
 }
 
-<h2>Excel ile Kullanıcı Ekleme</h2><br />
-<div class="row">
-    <div id="userList" class="col-md-8">
-        <h4>Kullanıcı Listesi</h4>
-        <table id="userTable" class="table table-responsive-md table-primary" border="1">
+<p style="background-color: rgba(51,122,183,255) ; color: white">Excel Import</p>
+<form id="uploadForm" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label>Excel Yolu:</label>
+        <input type="file" name="excelFile" id="excelFile" class="form-control" />
+    </div>
+    <button type="button" id="uploadBtn" class="btn btn-primary">Yükle</button>
+
+</form>
+
+<!--Alan Eşleştirme Tablosu-->
+
+<form method="post" action="/User/ColumnMappingResult">
+    <div id="mappingSection" >
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Kullanıcı Adı</th>
-
-                    <th id="identityHeader">Kimlik Numarası</th>
-
-                    <th>Email</th>
-                    <th>Yetki Seviyesi</th>
+                    <th>Alan Adı</th>
+                    <th>Excel Sütun Başlığı</th>
                 </tr>
             </thead>
-            <tbody id="userTableBody"></tbody>
-        </table>
-    </div>
-    <div class="col-md-4">
-        <h4>Excel ile Kullanıcı Kaydı</h4>
-        <form asp-controller="User" asp-action="UploadExcel" method="post" enctype="multipart/form-data" class="form-control" style="background-color: cornflowerblue;border-radius: 15px;">
+            <tbody id="mappingTableBody">
+                @foreach(var alan in alanlar)
+                {
+                    <tr>
+                        <td>@alan</td>
+                        <td>
+                            <select name="@(alan.Replace(" ", "") + "Column")" class="form-control excelHeaderSelect">
+								<option value="">Lütfen Excel dosyası yükleyiniz</option>
 
-            <input type="file" name="excelFile" accept=".xlsx" required /><br />
-            <button type="submit" class="btn btn-light mt-3">Yükle</button>
+							</select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+         </table>
+         <button type="submit" class="btn btn-success">Devam > ></button>
+     </div>    
 
-        </form>
-    </div>
-</div>
+</form>
 
+@section Scripts {
+    <script>
+               // "Excel'i Yükle" butonuna tıklandığında çalışacak fonksiyon
+        document.getElementById("uploadBtn").addEventListener("click", function () {
+            // Dosya seçme input'unu alıyoruz
+            var fileInput = document.getElementById("excelFile");
 
-
-@if (ViewBag.UploadMessage != null)
-{
-    <p style="color: green">@ViewBag.UploadMessage</p>
-}
-
-@if (ViewBag.UploadError != null)
-{
-    <p style="color: red">@ViewBag.UploadError</p>
-}
-
-
-@if (TempData.Peek("ErrorUsers") != null) // peek kulanımının sebebi , TempData'daki veriyi silmeden kontrol etmek .Normalde TempData["anahtar"] bir kez erişildiğinde silinir. Yani TempData bir defalık kullanımlıktır.
-{
-	<a class="btn btn-warning" href="/User/DownloadErrorExcel" style="margin-top:10px;">Hatalı Kayıtları İndir</a>
-}
-
-@section Scripts{
-	<script>
-        const currentAuthorityLevel = '@(ViewBag.AuthorityLevel ?? "")'; 
-                 document.addEventListener("DOMContentLoaded", function () {
-           
-
-            // Kimlik sütun başlığını seç
-            const identityHeader = document.getElementById("identityHeader");
-
-            // Yetki seviyesi 1 değilse gizle, 1 ise göster
-            if (currentAuthorityLevel === "1") {
-                identityHeader.style.display = "";
-            } else {
-                identityHeader.style.display = "none";
+            // Eğer kullanıcı dosya seçmemişse uyarı verip çıkıyoruz
+            if (fileInput.files.length === 0) {
+                alert("Lütfen bir dosya seçin.");
+                return; // Fonksiyonu sonlandır
             }
 
-            fetch('/User/UserList')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.querySelector("#userTableBody");
-                    tbody.innerHTML = "";
+            // FormData nesnesi oluşturuyoruz, bu dosya gönderimi için gerekli
+            var formData = new FormData();
+            // FormData'ya seçilen dosyayı ekliyoruz, anahtar adı "excelFile"
+            formData.append("excelFile", fileInput.files[0]);
 
-                    data.forEach(user => {
-                        let row = "<tr>";
-                        row += `<td>${user.id}</td>`;
-                        row += `<td>${user.userName}</td>`;
+            // fetch API ile arka planda POST isteği yapıyoruz
+            fetch('/User/UploadExcel', {
+                method: 'POST',    // POST metodu ile veri gönderiyoruz
+                body: formData     // Gönderilen veri formData nesnesi (dosya)
+            })
+            // İstek sonucu dönen yanıtı JSON olarak parse ediyoruz
+            .then(resp => resp.json())
+            .then(data => {
+                // Eğer backend'den gelen cevapta success false ise hata mesajı göster
+                if (!data.success) {
+                    alert(data.message);
+                    return; // Fonksiyonu sonlandır
+                }
 
-                        if (currentAuthorityLevel === "1") {
-                            row += `<td>${user.identityNumber ?? ""}</td>`;
-                        }
+                // Başlıklar (headers) verisini alıyoruz, bunlar Excel dosyasındaki sütun isimleri
+                let headers = data.headers;
 
-                        row += `<td>${user.email}</td>`;
-                        row += `<td>${user.authorityLevelDescription}</td>`;
-                        row += "</tr>";
+                // Sayfadaki tüm select box'ları seçiyoruz (class = excelHeaderSelect)
+                let selects = document.querySelectorAll(".excelHeaderSelect");
 
-                        tbody.insertAdjacentHTML("beforeend", row);
+                // Her bir selectbox için
+                selects.forEach(sel => {
+                    // Önce içeriğini temizle ve ilk seçenek olarak "Seçiniz" koy
+                    sel.innerHTML = '<option value="">-- Seçiniz --</option>';
+
+                    // Excel dosyasındaki tüm başlıkları seçenek olarak ekle
+                    headers.forEach(h => {
+                        // Yeni bir option elementi oluştur
+                        let opt = document.createElement("option");
+                        opt.value = h;   // Option'un value değeri sütun adı
+                        opt.text = h;    // Görünen metin olarak da sütun adı
+                        // Option'u selectbox'a ekle
+                        sel.appendChild(opt);
                     });
-                })
-                .catch(err => console.error('Kullanıcı listesi yüklenirken hata:', err));
+                });
+
+                // Eşleştirme formunun bulunduğu alanı görünür yap (başta gizliydi)
+                // document.getElementById("mappingSection").style.display = "block";
+            });
         });
 
-        
-	</script>
+    </script>
 }
