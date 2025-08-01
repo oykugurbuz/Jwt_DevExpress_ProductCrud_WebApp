@@ -83,13 +83,14 @@ Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numaras
 - Bu işlem, hatalı eşleştirmelerin önüne geçilmesini sağlar ve veri bütünlüğünü garanti altına alır.
 
 
-| Model Alanı          | Excel Sütun Başlığı Örneği |
-| -------------------- | -------------------------- |
-| T.C. Kimlik Numarası | IdentityNumber             |
-| Kullanıcı Adı        | UserName                   |
-| E-Posta              | Email                      |
-| Şifre                | Password                   |
-| Yetki Seviyesi       | AuthorityLevel             |
+| Model Alanı          | Excel Sütun Başlığı Örneği  |
+|----------------------|-----------------------------|
+| T.C. Kimlik Numarası | IdentityNumber              |
+| Kullanıcı Adı        | UserName                    |
+| E-Posta              | Email                       |
+| Şifre                | Password                    |
+| Yetki Seviyesi       | AuthorityLevel              |
+
 
 #### Ön İzleme ve Doğrulama:
 
