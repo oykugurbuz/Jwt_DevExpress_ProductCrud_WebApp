@@ -68,33 +68,44 @@ Modül seçildiğinde ilgili yetkiler otomatik doldurulur.
 Tüm filtreleme işlemi Entity Framework ile backend’de yapılır.
 
 ## Excel ile Toplu Kullanıcı Ekleme
-Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleyebilme özelliği bulunmaktadır. Bu sayede çok sayıda kullanıcı kaydını hızlıca oluşturabilirsiniz.
-### Nasıl Kullanılır?
-- Excel ile Kullanıcı Kaydı başlığı altında bulunan form aracılığıyla .xlsx uzantılı Excel dosyanızı seçip yükleyebilirsiniz.
+Uygulama, kullanıcıların Excel dosyası aracılığıyla sisteme toplu olarak eklenmesini desteklemektedir. Bu özellik, çok sayıda kullanıcı bilgisini kısa sürede ve hatasız bir şekilde sisteme aktarmak için tasarlanmıştır.
+### Özellikler ve Kullanım Adımları
+#### Excel Dosyası Yükleme:
 
-- Excel dosyasında her satır bir kullanıcıyı temsil eder ve aşağıdaki sütunlar zorunludur:
+Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numarası, Kullanıcı Adı, E-posta, Şifre, Yetki Seviyesi) içeren bir Excel dosyası sisteme yüklenir.
 
-| Sütun                  | Açıklama                          |
-| ---------------------- | --------------------------------- | 
-| 1                      | Kullanıcı Adı                     |
-| 2                      | Kimlik Numarası                   | 
-| 3                      | E-mail                            |
-| 4                      | Parola                            | 
+#### Alan Eşleştirme:
 
-- Dosya yüklendikten sonra, sistem dosyadaki kullanıcıları tek tek API'ye göndererek kayıt eder.
-- Eğer bazı kayıtlar hatalı ise kullanıcıya hatalı kayıt sayısını döndürür ve "Hatalı Kayıtları İndir" butonu aktif olur. Bu sayede hatalı eklenen kullanıcıların listesi excel formatında döndürülür.
+- Yüklenen Excel dosyasındaki sütun başlıkları, sistemdeki model alanları ile eşleştirilir.
 
-### Hatalı Kayıtlar
-- Hatalı kayıtlar kullanıcı adı, kimlik numarası, email ve parola bilgileri ile birlikte Excel olarak indirilebilir.
+- Kullanıcı, her alan için açılan SelectBox aracılığıyla doğru sütun başlığını seçerek eşleştirme yapar.
 
-- Böylece hatalar kolayca tespit edilip düzeltilebilir.
+- Bu işlem, hatalı eşleştirmelerin önüne geçilmesini sağlar ve veri bütünlüğünü garanti altına alır.
+| Model Alanı          | Excel Sütun Başlığı Örneği |
+| -------------------- | -------------------------- |
+| T.C. Kimlik Numarası | IdentityNumber             |
+| Kullanıcı Adı        | UserName                   |
+| E-Posta              | Email                      |
+| Şifre                | Password                   |
+| Yetki Seviyesi       | AuthorityLevel             |
 
-### Teknik Detaylar
-- Excel dosyası OfficeOpenXml kütüphanesi ile okunur.
+#### Ön İzleme ve Doğrulama:
 
-- Her satırdaki kullanıcı bilgileri SignupModel ile API'ye JSON olarak gönderilir.
+- Eşleştirme tamamlandıktan sonra “Devam” butonuna tıklanarak, Excel verileri sistemde ön izleme için listelenir.
 
-- API'den dönen başarısız kayıtlar TempData üzerinden View'e taşınır ve kullanıcıya bildirilir.
+- Kullanıcı, aktarılacak bilgileri kontrol edebilir ve gerekli düzenlemeleri yapabilir.
+
+#### Veri Aktarımı ve Kayıt:
+
+- “Kaydet” butonuna tıklanmasıyla birlikte, doğrulanan kullanıcı kayıtları API aracılığıyla veritabanına eklenir.
+#### Hata Yönetimi:
+
+- Doğrulama sürecinde hatalı bulunan kayıtlar sistem tarafından kaydedilmez.
+
+- Her bir hatalı satıra özel açıklayıcı hata mesajı kullanıcıya sunulur.
+
+- Bu sayede kullanıcı, sorunlu kayıtları kolayca tespit edebilir ve düzeltme işlemini daha kullanıcı dostu bir şekilde gerçekleştirebilir.
+
 ## Kullanılan Teknolojiler
 - ASP.NET Core MVC (.NET 8)
 
@@ -155,17 +166,17 @@ Projede, kullanıcıları toplu olarak Excel dosyası yükleyerek sisteme ekleye
 
 ### Excel ile Toplu Kullanıcı Ekleme
 
-#### Excel İle Toplu Kullanıcı Ekleme Sayfası (Tam Yetkiye Sahip Kullanıcılar İçin)
-Tam yetkiye sahip kullanıcılarda Kullanıcı Listesindeki Kimlik Numarası sütunu bulunur.
-![Excel ile Toplu Kullanıcı Ekleme Görseli](screenshots/excelimport_page.png)
+#### Excel Import Sayfası
+![Excel Import Sayfası](screenshots/excelImport_1.png)
 
-#### Excel İle Toplu Kullanıcı Ekleme Sayfası (Tam Yetkiye Sahip Olmayan Kullanıcılar İçin)
-Tam yetkiye sahip olmayan kullanıcılarda Kullanıcı Listesindeki Kimlik Numarası sütunu bulunmaz.
-![Excel ile Toplu Kullanıcı Ekleme Görseli](screenshots/AuthorityLevel_excelimport.png)
+#### Excel dosyası yüklenir ve excel sütun başlıkları seçilerek eşleştirme yapılır.
 
-#### Hatalı Kayıtlar 
-![Hatalı Kayıtlar Görseli](screenshots/error_excelimport.png)
+![Excel dosyası yüklenir ve excel sütun başlıkları seçilerek eşleştirme yapılır.](screenshots/excelImport_2.png)
 
-#### Örnek Excel Şablonu
+#### Önizleme
 
-[downloads/YeniKullaniciListesi.xlsx](downloads/YeniKullaniciListesi.xlsx)
+![Önizleme](screenshots/ColumnMappingResult.png)
+
+#### Hatalı kayıtların gösterimi
+
+![Hatalı kayıtların gösterimi](screenshots/results.png)
