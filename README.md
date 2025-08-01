@@ -81,6 +81,8 @@ Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numaras
 - Kullanıcı, her alan için açılan SelectBox aracılığıyla doğru sütun başlığını seçerek eşleştirme yapar.
 
 - Bu işlem, hatalı eşleştirmelerin önüne geçilmesini sağlar ve veri bütünlüğünü garanti altına alır.
+
+
 | Model Alanı          | Excel Sütun Başlığı Örneği |
 | -------------------- | -------------------------- |
 | T.C. Kimlik Numarası | IdentityNumber             |
