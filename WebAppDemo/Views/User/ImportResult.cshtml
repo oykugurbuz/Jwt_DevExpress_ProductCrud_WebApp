@@ -2,7 +2,6 @@
 @{
 	ViewData["Title"] = "ImportResult";
 	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
-
 }
 
 <h2>Aktarılacak Bilgiler</h2>
@@ -15,68 +14,52 @@
 			<th>E-Mail</th>
 			<th>Şifre</th>
 			<th>Kullanıcı Seviyesi</th>
-			<th>Hata Mesajı</th>
+			<th id="errorHeader" style="visibility: hidden">Hata Mesajı</th>
 		</tr>
 	</thead>
-	<tbody class="userTableBody">
-		@foreach (var result in Model)
-		{
-			var user = result.User;
-
-			<tr>
-				<td>@user.IdentityNumber</td>
-				<td>@user.UserName</td>
-				<td>@user.Email</td>
-				<td>@user.Password</td>
-				<td>@user.AuthorityLevel</td>
-				@if (!string.IsNullOrEmpty(result.Message))
-				{
-					<td style="color: red">@result.Message</td>
-					
-				}
-				else
-				{
-					<td style="color: green"></td>
-				}
-			</tr>
-		}
+	<tbody id="userTableBody">
+		@Html.Partial("_ImportResultTable", Model) <!-- Partial burada çağrılıyor -->
 	</tbody>
-  
+	
 </table>
 
 <button class="btn btn-success" id="saveBtn">Kaydet</button>
 
-@section Scripts{
+
+@section Scripts {
 	<script>
-		document.getElementById("saveBtn").addEventListener("click",function(){
-			const rows= document.querySelectorAll("#userTableBody tr"); //tbody içindeki bütün satırları
-			let users=[];
+		document.getElementById("saveBtn").addEventListener("click", async function () {
+			const rows = document.querySelectorAll("#userTableBody tr");
+			let users = [];
 
-			rows.forEach(row=> {
+			rows.forEach(row => {
 				const cells = row.querySelectorAll("td");
-
 				let user = {
-					identityNumber : cells[0].innerText,
-					userName: cells[1].innerText,
-					email: cells[2].innerText,
-					password : cells[3].innerText,
-					authorityLevel: cells[4].innerText
+					identityNumber: cells[0].innerText.trim(),
+					userName: cells[1].innerText.trim(),
+					email: cells[2].innerText.trim(),
+					password: cells[3].innerText.trim(),
+					authorityLevel: cells[4].innerText.trim()
 				};
 				users.push(user);
 			});
 
-			const response = fetch('/User/SaveUsers',{
-				method: 'POST',
-				headers: {
-					'ContentType': 'application/json'
-				},
-				body: JSON.stringify(users)
+			try {
+				const response = await fetch('/User/SaveUsers', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(users)
+				});
 
-			});
-
-			const result = await response.json();
-			alert(result.message);
-			location.reload();
+				const html = await response.text();
+			
+				document.getElementById("errorHeader").style.visibility = "visible";
+				document.getElementById("userTableBody").innerHTML = html;
+			} catch (error) {
+				alert("Bir hata oluştu: " + error.message);
+			}
 		});
 	</script>
 }

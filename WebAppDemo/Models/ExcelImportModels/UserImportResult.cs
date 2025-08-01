@@ -4,7 +4,7 @@
     {
         public bool IsSuccess { get; set; } = true;
 
-        public string? Message { get; set; }
+        public string? Message { get; set; } 
 
         public int RowNumber { get; set; } //hata hangi satırda 
 

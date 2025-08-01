@@ -1,0 +1,19 @@
+﻿@model List<WebAppDemo.Models.ExcelImportModels.UserImportResult>
+
+@foreach (var result in Model)
+{
+
+        var user = result.User; 
+
+
+    <tr>
+        <td>@user.IdentityNumber</td>
+        <td>@user.UserName</td>
+        <td>@user.Email</td>
+        <td>@user.Password</td>
+        <td>@user.AuthorityLevel</td>
+        <td style="color:@(string.IsNullOrEmpty(result.Message) ? "green" : "red")">
+            @result.Message
+        </td>
+    </tr>
+}

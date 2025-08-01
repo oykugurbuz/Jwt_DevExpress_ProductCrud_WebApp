@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Excel Import";
     Layout = "~/Views/Shared/_LayoutAuth.cshtml";
     var alanlar = new List<string>
@@ -51,37 +50,37 @@
 
 @section Scripts {
     <script>
-               // "Excel'i Yükle" butonuna tıklandığında çalışacak fonksiyon
+
         document.getElementById("uploadBtn").addEventListener("click", function () {
-            // Dosya seçme input'unu alıyoruz
+           
             var fileInput = document.getElementById("excelFile");
 
-            // Eğer kullanıcı dosya seçmemişse uyarı verip çıkıyoruz
+          
             if (fileInput.files.length === 0) {
                 alert("Lütfen bir dosya seçin.");
-                return; // Fonksiyonu sonlandır
+                return; 
             }
 
-            // FormData nesnesi oluşturuyoruz, bu dosya gönderimi için gerekli
+          
             var formData = new FormData();
-            // FormData'ya seçilen dosyayı ekliyoruz, anahtar adı "excelFile"
+         
             formData.append("excelFile", fileInput.files[0]);
 
-            // fetch API ile arka planda POST isteği yapıyoruz
+          
             fetch('/User/UploadExcel', {
-                method: 'POST',    // POST metodu ile veri gönderiyoruz
-                body: formData     // Gönderilen veri formData nesnesi (dosya)
+                method: 'POST',    
+                body: formData     
             })
             // İstek sonucu dönen yanıtı JSON olarak parse ediyoruz
             .then(resp => resp.json())
             .then(data => {
-                // Eğer backend'den gelen cevapta success false ise hata mesajı göster
+              
                 if (!data.success) {
                     alert(data.message);
-                    return; // Fonksiyonu sonlandır
+                    return; 
                 }
 
-                // Başlıklar (headers) verisini alıyoruz, bunlar Excel dosyasındaki sütun isimleri
+              
                 let headers = data.headers;
 
                 // Sayfadaki tüm select box'ları seçiyoruz (class = excelHeaderSelect)
@@ -89,22 +88,20 @@
 
                 // Her bir selectbox için
                 selects.forEach(sel => {
-                    // Önce içeriğini temizle ve ilk seçenek olarak "Seçiniz" koy
+                  
                     sel.innerHTML = '<option value="">-- Seçiniz --</option>';
 
-                    // Excel dosyasındaki tüm başlıkları seçenek olarak ekle
                     headers.forEach(h => {
-                        // Yeni bir option elementi oluştur
+                       
                         let opt = document.createElement("option");
-                        opt.value = h;   // Option'un value değeri sütun adı
-                        opt.text = h;    // Görünen metin olarak da sütun adı
-                        // Option'u selectbox'a ekle
+                        opt.value = h;   
+                        opt.text = h;    
+                     
                         sel.appendChild(opt);
                     });
                 });
 
-                // Eşleştirme formunun bulunduğu alanı görünür yap (başta gizliydi)
-                // document.getElementById("mappingSection").style.display = "block";
+               
             });
         });
 
