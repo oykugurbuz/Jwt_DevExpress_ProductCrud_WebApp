@@ -145,78 +145,39 @@ namespace WebAppDemo.Controllers
             
             return View("ImportResult", results); 
         }
-       
+
         [HttpPost]
+     
         public async Task<IActionResult> SaveUsers([FromBody] List<SignupModel> users)
         {
-            var results = new List<UserImportResult>();
-            using var client = new HttpClient();
+            
+                if (users == null || !users.Any())
+                    return BadRequest("Gönderilen veri boş veya format hatalı.");
 
-            foreach (var user in users)
-            {
-                var result = new UserImportResult
+                using var client = new HttpClient();
+                var json = JsonSerializer.Serialize(users); // array olarak JSON
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("http://localhost:5269/api/Auth/signup-bulk", content);
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    User = user
-                };
-
-                try
-                {
-                    var json = JsonSerializer.Serialize(user);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    var response = await client.PostAsync("http://localhost:5269/api/Auth/signup", content);
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var responseBody = await response.Content.ReadAsStringAsync();
-
-                        try
-                        {
-                            var errorDoc = JsonDocument.Parse(responseBody);
-
-                            // 1. Validation hataları
-                            if (errorDoc.RootElement.TryGetProperty("errors", out var errorsElement))
-                            {
-                                var errorMessages = new List<string>();
-                                foreach (var property in errorsElement.EnumerateObject())
-                                {
-                                    foreach (var message in property.Value.EnumerateArray())
-                                    {
-                                        errorMessages.Add(message.GetString());
-                                    }
-                                }
-
-                                result.Message = string.Join(" | ", errorMessages);
-                            }
-                            // 2. Tek bir hata mesajı varsa
-                            else if (errorDoc.RootElement.TryGetProperty("message", out var messageElement))
-                            {
-                                result.Message = messageElement.GetString();
-                            }
-                            // 3. Bilinmeyen hata
-                            else
-                            {
-                                result.Message = responseBody;
-                            }
-                        }
-                        catch
-                        {
-                            result.Message = responseBody;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    result.Message = ex.Message;
+                   
+                    return BadRequest(responseBody);
                 }
 
-                results.Add(result);
-            }
-            return PartialView("_ImportResultTable", results); // sadece <tr> satırları dönüyor
+                var apiResults = JsonSerializer.Deserialize<List<UserImportResult>>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-           
+                return PartialView("_ImportResultTable", apiResults);
+            
+
         }
-
+      
         public IActionResult ImportResult()
         {
             var userName = User.Identity?.Name;

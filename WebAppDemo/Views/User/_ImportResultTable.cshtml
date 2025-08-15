@@ -2,18 +2,28 @@
 
 @foreach (var result in Model)
 {
-
-        var user = result.User; 
-
-
+    var user = result.User;
+	var messages = result.Messages;
     <tr>
         <td>@user.IdentityNumber</td>
         <td>@user.UserName</td>
         <td>@user.Email</td>
         <td>@user.Password</td>
         <td>@user.AuthorityLevel</td>
-        <td style="color:@(string.IsNullOrEmpty(result.Message) ? "green" : "red")">
-            @result.Message
+        <td>
+            @if (!messages.Any())
+            {
+                
+            }
+            else
+            {
+                <ul style="margin:0; padding-left:15px; color:red">
+                    @foreach (var msg in messages)
+                    {
+                        <li>@msg</li>
+                    }
+                </ul>
+            }
         </td>
     </tr>
 }
