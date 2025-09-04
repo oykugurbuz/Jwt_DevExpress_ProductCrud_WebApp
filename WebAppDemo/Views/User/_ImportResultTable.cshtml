@@ -1,9 +1,10 @@
 ﻿@model List<WebAppDemo.Models.ExcelImportModels.UserImportResult>
-
+<input type="hidden" id="successCount" value="@ViewBag.SuccessCount" />
+<input type="hidden" id="totalCount" value="@ViewBag.TotalCount" />
 @foreach (var result in Model)
 {
     var user = result.User;
-	var messages = result.Messages;
+    var messages = result.Messages;
     <tr>
         <td>@user.IdentityNumber</td>
         <td>@user.UserName</td>
@@ -13,7 +14,7 @@
         <td>
             @if (!messages.Any())
             {
-                
+
             }
             else
             {

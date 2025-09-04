@@ -4,6 +4,8 @@
 	Layout = "~/Views/Shared/_LayoutAuth.cshtml";
 }
 
+<div id="resultAlert" class="alert" style="display:none"></div>
+
 <h2>Aktarılacak Bilgiler</h2>
 
 <table class="table table-hover" id="userTable">
@@ -24,6 +26,7 @@
 </table>
 
 <button class="btn btn-success" id="saveBtn">Kaydet</button>
+
 
 
 @section Scripts {
@@ -58,6 +61,32 @@
 			
 				document.getElementById("errorHeader").style.visibility = "visible";
 				document.getElementById("userTableBody").innerHTML = html;
+				
+				const alertbox = document.getElementById("resultAlert");
+				// const totalCountValue= document.getElementById("totalCount")?.value;
+				const totalCountInt= parseInt(document.getElementById("totalCount")?.value ||"0");
+				// const successCountValue=document.getElementById("successCount")?.value;
+				const successCountInt = parseInt(document.getElementById("successCount")?.value ||"0");
+				const errorCountInt = totalCountInt - successCountInt;
+				if(totalCountInt>0){
+					
+					if(errorCountInt>0){
+						if(successCountInt>0){
+							alertbox.textContent= `${successCountInt} kayıt başarıyla kaydedildi. Kalan ${errorCountInt} hatalı kaydı kontrol ediniz.`;
+							alertbox.className= "alert alert-warning";
+						} 
+						else{
+                            alertbox.textContent= `Kayıt işlemi başarısız. ${errorCountInt} hatalı kaydı kontrol ediniz.`;
+							alertbox.className= "alert alert-danger";
+                        }
+
+				    }
+					else{
+                        alertbox.textContent= "Tüm kayıtlar başarıyla kaydedildi.";
+                        alertbox.className= "alert alert-success";
+					}
+				alertbox.style.display = "block";
+				}
 			} catch (error) {
 				alert("Bir hata oluştu: " + error.message);
 			}

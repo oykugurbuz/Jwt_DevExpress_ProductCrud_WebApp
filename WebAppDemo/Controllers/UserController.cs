@@ -173,7 +173,11 @@ namespace WebAppDemo.Controllers
                     PropertyNameCaseInsensitive = true
                 });
 
-                return PartialView("_ImportResultTable", apiResults);
+            var totalCount = apiResults.Count;
+            ViewBag.TotalCount = totalCount;
+            var SuccessCount = apiResults.Count(r => r.Messages == null || !r.Messages.Any());
+            ViewBag.SuccessCount = SuccessCount;
+            return PartialView("_ImportResultTable", apiResults);
             
 
         }

@@ -65,6 +65,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 return Task.CompletedTask;
             }
+            //,
+            //OnChallenge = context  =>
+            //{
+            //    context.HandleResponse();
+            //    context.Response.Redirect("/Auth/UnauthorizedView");
+
+            //    return Task.CompletedTask;
+            //}
         };
     });
 
