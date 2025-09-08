@@ -63,9 +63,9 @@
 				document.getElementById("userTableBody").innerHTML = html;
 				
 				const alertbox = document.getElementById("resultAlert");
-				// const totalCountValue= document.getElementById("totalCount")?.value;
+				
 				const totalCountInt= parseInt(document.getElementById("totalCount")?.value ||"0");
-				// const successCountValue=document.getElementById("successCount")?.value;
+				
 				const successCountInt = parseInt(document.getElementById("successCount")?.value ||"0");
 				const errorCountInt = totalCountInt - successCountInt;
 				if(totalCountInt>0){
