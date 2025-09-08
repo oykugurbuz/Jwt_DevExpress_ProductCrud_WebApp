@@ -182,4 +182,4 @@ Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numaras
 
 #### Hatalı kayıtların gösterimi
 
-![Hatalı kayıtların gösterimi](screenshots/results.png)
+![Hatalı kayıtların gösterimi](screenshots/ColumnMappingResult2.png)
