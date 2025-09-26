@@ -11,8 +11,56 @@
 	<link href="https://fonts.googleapis.com/css2?family=Signika:wght@300..700&display=swap" rel="stylesheet">
 
 	<link href="~/css/style.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
 </head>
     <body></body>
 </html>
 @* <div class="welcomeCard col-lg-4 col-md-6 col-sm-12">
 	<p>Hoş geldin @ViewBag.Username !!!</p></div> *@
+
+	<div>Online kullanıcı sayısı:<span id="userCount">0</span></div>
+	
+	
+@section Scripts{
+	<script>
+
+			(async function(){
+			const hubConnection= new signalR.HubConnectionBuilder()
+				                			.withUrl("/userCountHub")
+										    .build();
+
+		hubConnection.on("UpdateUserCount",count=>{
+			const userCount=document.getElementById("userCount");
+			if(userCount)
+			   userCount.innerText= count;
+			});
+			
+			// bağlantı kapanıyorsa                    
+			hubConnection.onclose(err=>{
+				console.warn("Bağlantı kapatıldı: "+err);
+			});
+
+			// bağlantıyı başlatmak için
+
+			try{
+				await hubConnection.start();
+				console.log("Bağlantı başarılı");
+			}
+			catch(err){
+			    console.error("Bağlantı başarısız.: "+err);			
+			}
+
+			window.addEventListener("beforeunload",()=>{
+				if(hubConnection&&hubConnection.state === signalR.HubConnectionState.Connected){
+					hubConnection.stop();
+				}
+			});
+
+			})();
+
+	
+
+	</script>
+}
+	

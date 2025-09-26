@@ -83,6 +83,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//signalr
+
+builder.Services.AddSignalR();
 //devexpress
 builder.Services.AddDevExpressControls();
 builder.Services.AddSession();
@@ -127,8 +130,8 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
- 
 
+app.MapHub<WebAppDemo.Hubs.UserCountHub>("/userCountHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=auth}/{action=login}/{id?}");
