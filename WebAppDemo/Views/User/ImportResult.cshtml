@@ -24,72 +24,90 @@
 	</tbody>
 	
 </table>
+<div class="save" style="display:flex">
+	<div class="progress" style="width: 150px;
+		height: 30px;
+		margin-right: 10px;display:none">
+		
+		<div id="excelProgress" class="progress-bar" role="progressbar" style="width:0%;height:30px">
+		</div>
+	</div>
 
-<button class="btn btn-success" id="saveBtn">Kaydet</button>
+	<button class="btn btn-success" id="saveBtn">Kaydet</button>
 
-
+</div>
 
 @section Scripts {
 	<script>
-		document.getElementById("saveBtn").addEventListener("click", async function () {
-			const rows = document.querySelectorAll("#userTableBody tr");
-			let users = [];
+		(async function() { // ← async IIFE başlat
 
-			rows.forEach(row => {
-				const cells = row.querySelectorAll("td");
-				let user = {
-					identityNumber: cells[0].innerText.trim(),
-					userName: cells[1].innerText.trim(),
-					email: cells[2].innerText.trim(),
-					password: cells[3].innerText.trim(),
-					authorityLevel: cells[4].innerText.trim()
-				};
-		
-				users.push(user);
+			const excelProgress = document.getElementById("excelProgress");
+			const progress = document.querySelector(".progress");
+
+			const hubConnection = new signalR.HubConnectionBuilder()
+				.withUrl("http://localhost:5269/JwtTokenProject2/ExcelProgressBarHub")
+				.build();
+
+			hubConnection.on('ExcelImportProgress', percent => {
+				progress.style.display = "block";
+				excelProgress.style.width = percent + "%";
+				excelProgress.textContent = percent + "%";
 			});
 
-			try {
-				const response = await fetch('/User/SaveUsers', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(users)
+			await hubConnection.start().catch(err => console.error(err));
+
+			document.getElementById("saveBtn").addEventListener("click", async function () {
+				const rows = document.querySelectorAll("#userTableBody tr");
+				let users = [];
+
+				rows.forEach(row => {
+					const cells = row.querySelectorAll("td");
+					let user = {
+						identityNumber: cells[0].innerText.trim(),
+						userName: cells[1].innerText.trim(),
+						email: cells[2].innerText.trim(),
+						password: cells[3].innerText.trim(),
+						authorityLevel: cells[4].innerText.trim()
+					};
+					users.push(user);
 				});
 
-				const html = await response.text();
-			
-				document.getElementById("errorHeader").style.visibility = "visible";
-				document.getElementById("userTableBody").innerHTML = html;
-				
-				const alertbox = document.getElementById("resultAlert");
-				
-				const totalCountInt= parseInt(document.getElementById("totalCount")?.value ||"0");
-				
-				const successCountInt = parseInt(document.getElementById("successCount")?.value ||"0");
-				const errorCountInt = totalCountInt - successCountInt;
-				if(totalCountInt>0){
-					
-					if(errorCountInt>0){
-						if(successCountInt>0){
-							alertbox.textContent= `${successCountInt} kayıt başarıyla kaydedildi. Kalan ${errorCountInt} hatalı kaydı kontrol ediniz.`;
-							alertbox.className= "alert alert-warning";
-						} 
-						else{
-                            alertbox.textContent= `Kayıt işlemi başarısız. ${errorCountInt} hatalı kaydı kontrol ediniz.`;
-							alertbox.className= "alert alert-danger";
-                        }
+				try {
+					const response = await fetch('/User/SaveUsers', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(users)
+					});
 
-				    }
-					else{
-                        alertbox.textContent= "Tüm kayıtlar başarıyla kaydedildi.";
-                        alertbox.className= "alert alert-success";
+					const html = await response.text();
+					document.getElementById("errorHeader").style.visibility = "visible";
+					document.getElementById("userTableBody").innerHTML = html;
+
+					const alertbox = document.getElementById("resultAlert");
+					const totalCountInt = parseInt(document.getElementById("totalCount")?.value || "0");
+					const successCountInt = parseInt(document.getElementById("successCount")?.value || "0");
+					const errorCountInt = totalCountInt - successCountInt;
+
+					if (totalCountInt > 0) {
+						if (errorCountInt > 0) {
+							if (successCountInt > 0) {
+								alertbox.textContent = `${successCountInt} kayıt başarıyla kaydedildi. Kalan ${errorCountInt} hatalı kaydı kontrol ediniz.`;
+								alertbox.className = "alert alert-warning";
+							} else {
+								alertbox.textContent = `Kayıt işlemi başarısız. ${errorCountInt} hatalı kaydı kontrol ediniz.`;
+								alertbox.className = "alert alert-danger";
+							}
+						} else {
+							alertbox.textContent = "Tüm kayıtlar başarıyla kaydedildi.";
+							alertbox.className = "alert alert-success";
+						}
+						alertbox.style.display = "block";
 					}
-				alertbox.style.display = "block";
+				} catch (error) {
+					alert("Bir hata oluştu: " + error.message);
 				}
-			} catch (error) {
-				alert("Bir hata oluştu: " + error.message);
-			}
-		});
+			});
+
+		})(); 
 	</script>
 }

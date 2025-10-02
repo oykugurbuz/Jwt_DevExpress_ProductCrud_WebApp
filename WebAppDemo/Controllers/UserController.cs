@@ -19,6 +19,7 @@ namespace WebAppDemo.Controllers
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
+
         public UserController(ApplicationDbContext context)
         {
             _context = context;

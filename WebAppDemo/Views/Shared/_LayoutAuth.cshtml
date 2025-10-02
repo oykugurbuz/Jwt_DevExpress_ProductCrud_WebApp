@@ -48,7 +48,17 @@
 				</nav>
 			</header>
 			@RenderBody()
+			
 		</div>
+	</div>
+	<div id="newUserAlert" class="alert" style="display:none;
+     position: fixed;
+     bottom: 20px;
+     left: 50%;
+     transform: translateX(-50%);
+     z-index: 9999;
+     min-width: 300px;
+     text-align: center;">
 	</div>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/knockout@3.5.1/build/output/knockout-latest.js"></script> 
@@ -60,6 +70,7 @@
 	<script src="~/lib/xtrareportsjs/js/globalize.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 	<script>
 
 		$(function(){
@@ -115,6 +126,30 @@
 			});
 		});
 		
+		
+		(async function () {
+			const alertbox = document.getElementById("newUserAlert");
+			const connection = new signalR.HubConnectionBuilder()
+				.withUrl("http://localhost:5269/JwtTokenProject2/UserHub") // otomatik host/protokol alır
+				.build();
+
+			connection.on("CreatedNewUser", (user) => {
+				alertbox.style.display = "block";
+				alertbox.className = "alert alert-success";
+				alertbox.textContent = `Yeni bir kullanıcı katıldı: ${user.userName}`;
+
+				setTimeout(() => {
+					alertbox.style.display = "none";
+				}, 5000);
+			});
+
+			try {
+				await connection.start();
+				console.log("SignalR bağlantısı kuruldu.");
+			} catch (err) {
+				console.error("SignalR hatası:", err);
+			}
+		})();
 	</script>
 	@RenderSection("Scripts", required: false)
 </body>

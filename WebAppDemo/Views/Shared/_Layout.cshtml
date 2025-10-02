@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="~/WebAppDemo.styles.css" asp-append-version="true" />
 	<!-- DevExtreme CSS -->
 	<link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.5/css/dx.light.css" />
-	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 </head>
 <body>
 	    
@@ -19,7 +19,7 @@
 			
 		</header>
 	
-	 <div class="container">
+	 <div class="container" style="position:relative">
 		<main role="main" class="pb-3">
 			@RenderBody()
 		</main>
@@ -31,7 +31,14 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	@RenderSection("Scripts", required: false)
+	
+
 </body>
 </html> 
 
 
+
+
+		
+
+	

@@ -24,16 +24,17 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 var _configuration = builder.Configuration;
 //CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+        policy => policy
+            .WithOrigins("http://localhost:5269") // izin verilen originler
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
+
 
 
 
