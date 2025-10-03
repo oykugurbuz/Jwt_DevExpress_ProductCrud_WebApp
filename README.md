@@ -14,6 +14,9 @@ Bu proje, oluşturmuş olduğum JwtToken_Project (https://github.com/oykugurbuz/
 - Action bazlı HasPermission attribute yapısı
 - Kategori, fiyat ve tarih aralığına göre gelişmiş filtreleme,raporlama ve raporların iframe ile sayfa içine gömülmesi
 - DevExpress bileşenleri ile ile zengin arayüz
+- Real-Time Bildirimler ve E-Posta Gönderimi(Kaydolan kullanıcılara hoşgeldiniz maili gönderimi ve diğer kullanıcılara gerçek zamanlı kaydolan kullanıcı olduğu bildirimi)
+- Excel Import işlemiyle toplu olarak kullanıcı kaydı yapılabilmesi + Excel Import Progress Bar (Real-Time)
+- Anasayfada online kullanıcı sayacı ile aktif kullanıcı takibi
 
 ## JWT
 
@@ -101,6 +104,7 @@ Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numaras
 #### Veri Aktarımı ve Kayıt:
 
 - “Kaydet” butonuna tıklanmasıyla birlikte, doğrulanan kullanıcı kayıtları API aracılığıyla veritabanına eklenir.
+- Bu süreç sırasında, gerçek zamanlı progressbar devreye girer ve her bir kullanıcının kaydı tamamlandıkça progress bar üzerinde anlık olarak güncellenir. Böylece kullanıcı, veri aktarımının hangi aşamada olduğunu görür ve toplu işlemlerde işlem takibini kolayca yapabilir.
 #### Hata Yönetimi:
 
 - Doğrulama sürecinde hatalı bulunan kayıtlar sistem tarafından kaydedilmez.
@@ -108,6 +112,13 @@ Excel Import ekranı üzerinden, kullanıcıya ait bilgiler (T.C. Kimlik Numaras
 - Her bir hatalı satıra özel açıklayıcı hata mesajı kullanıcıya sunulur.
 
 - Bu sayede kullanıcı, sorunlu kayıtları kolayca tespit edebilir ve düzeltme işlemini daha kullanıcı dostu bir şekilde gerçekleştirebilir.
+
+## Real-Time Bildirimler ve E-Posta Gönderimi:  
+  Sisteme yeni bir kullanıcı kaydolduğunda, tüm aktif kullanıcılara gerçek zamanlı bildirimler iletilir. Ayrıca kaydolan kullanıcıya otomatik olarak bir “Hoş Geldiniz” e-postası gönderilir. Bu özellik, SignalR tabanlı real-time bildirim mekanizması ve entegre e-posta servisleri ile desteklenmektedir.
+
+
+## Online Kullanıcı Sayacı:  
+  Anasayfada, sistemde aktif olarak oturum açmış kullanıcı sayısı gerçek zamanlı olarak görüntülenir. Bu özellik, kullanıcıların sistem kullanım durumunu takip etmesini sağlar ve SignalR üzerinden sürekli güncellenir, böylece her zaman güncel kullanıcı sayısı görülebilir.
 
 ## Kullanılan Teknolojiler
 - ASP.NET Core MVC (.NET 8)
