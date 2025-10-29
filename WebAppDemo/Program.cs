@@ -13,7 +13,10 @@ using System.Text;
 using WebAppDemo.Models;
 using WebAppDemo.Seed;
 using WebAppDemo.Services;
-
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+using System.Reflection;
+using WebAppDemo.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
@@ -23,6 +26,41 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 var _configuration = builder.Configuration;
+
+//serilog config
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext() // Konteksten gelen bilgileri loglara otomatik ekler. 
+    .Enrich.WithEnvironmentName() // Ortam adýný (Development, Staging, Production vb.) loglara ekler.
+    .Enrich.WithMachineName() // Makine adýný loglara ekler. 
+    .Enrich.WithThreadId() // Ýþ parçacýðý kimliðini loglara ekler.
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day) //dosya sinki günlük döner Logs/log-2025-10-26.txt
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(builder.Configuration["ElasticCloud:Uri"])) // Elasticsearch sunucusunun URI'si
+    {
+        AutoRegisterTemplate = true, // elasticsearche aktatýrken þema otomatik oluþturulsun
+        IndexFormat = "webappdemo-logs-{0:yyyy.MM.dd}", // indeks formatý günlük olarak
+        FailureCallback = (logEvent, exception) => // hata durumunda çaðrýlacak geri arama logevent: loglanmaya çalýþýlan olay, exception: oluþan hata
+        {
+            Console.WriteLine($"{logEvent} de Elasticsearch sink hatasý: {exception?.Message}");
+        },
+        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                           EmitEventFailureHandling.WriteToFailureSink |
+                           EmitEventFailureHandling.RaiseCallback,
+        MinimumLogEventLevel = Serilog.Events.LogEventLevel.Information,
+        ModifyConnectionSettings = conn =>
+    conn.ApiKeyAuthentication(
+        new Elasticsearch.Net.ApiKeyAuthenticationCredentials(
+            builder.Configuration["ElasticCloud:ApiKey"]
+        )
+    )
+    })
+    .CreateLogger();
+
+
+builder.Host.UseSerilog();
+builder.Services.AddScoped<ActivityLogFilter>();
+builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
 //CORS
 
 builder.Services.AddCors(options =>
@@ -102,7 +140,10 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 //});
 
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<WebAppDemo.Filters.ActivityLogFilter>(); //tüm actionlara loglama filtresi ekleniyor
+});
 
 builder.Services.AddHttpClient();
 
@@ -125,7 +166,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseDevExpressControls();
 
-
+app.UseSerilogRequestLogging(); //otomatik request logging
 app.UseSession();
 app.UseCors("AllowAll");
 

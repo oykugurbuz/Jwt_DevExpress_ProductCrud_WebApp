@@ -30,7 +30,7 @@ namespace WebAppDemo.Models
         public bool RememberMe { get; set; }
         [EmailAddress]
         [Required]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         public ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
     }

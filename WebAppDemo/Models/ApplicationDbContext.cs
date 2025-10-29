@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using WebAppDemo.Models.PermissionModels;
 
 namespace WebAppDemo.Models
@@ -27,6 +28,12 @@ namespace WebAppDemo.Models
         public DbSet <Permission> Permissions { get; set; }
 
         public DbSet <UserPermission> UserPermissions { get; set; }
+
+        //Activity Log
+
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
+
+        //Fluent API ile ilişkileri yapılandırma
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
